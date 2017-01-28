@@ -1,0 +1,56 @@
+
+ <!-- action usual -->
+ [#if DATA_SOURCE="xidevices" || DATA_SOURCE=""#]
+ <!-- table xidevices search -->
+ [#if VIEW_MODE="search_xidevices" || VIEW_MODE=""#]
+  [#inc xidevices_search_admin.html#]
+ [#endif VIEW_MODE#]
+ <!-- / table xidevices search -->
+ <!-- table xidevices edit -->
+ [#if VIEW_MODE="edit_xidevices"#]
+   [#if ID!=""#]
+   [#if TITLE!=""#]<h4>[#TITLE#]</h4>[#endif TITLE#]
+<ul class="nav nav-tabs">
+  <li[#if TAB=""#] class="active"[#endif#]>
+   <a href="?data_source=<#DATA_SOURCE#>&view_mode=<#VIEW_MODE#>&id=<#ID#>&tab="><#LANG_GENERAL#></a>
+  </li>
+  <li[#if TAB="data"#] class="active"[#endif#]>
+   <a href="?data_source=<#DATA_SOURCE#>&view_mode=<#VIEW_MODE#>&id=<#ID#>&tab=data">&#060#LANG_DATA#&#062</a>
+  </li>
+</ul>
+&nbsp;<br/>
+   [#endif ID#]
+   [#if TAB=""#]
+    [#inc xidevices_edit_default.html#]
+   [#endif TAB#]
+   [#if TAB="data"#]
+    [#inc xidevices_edit_data.html#]
+   [#endif TAB#]
+ [#endif VIEW_MODE#]
+ <!-- / table xidevices edit -->
+ <!-- table xidevices view --> 
+ [#if VIEW_MODE="view_xidevices"#]
+   [#if TAB=""#]
+    [#inc xidevices_view_default.html#]
+   [#endif TAB#]
+ [#endif VIEW_MODE#]
+ <!-- / table xidevices view -->
+ [#endif DATA_SOURCE#]
+ <!-- action usual -->
+ [#if DATA_SOURCE="xicommands"#]
+ <!-- table xicommands search -->
+ [#if VIEW_MODE="search_xicommands" || VIEW_MODE=""#]
+  [#inc xicommands_search_admin.html#]
+ [#endif VIEW_MODE#]
+ <!-- / table xicommands search -->
+ <!-- table xicommands edit -->
+ [#if VIEW_MODE="edit_xicommands"#]
+   [#inc xicommands_edit.html#]
+ [#endif VIEW_MODE#]
+ <!-- / table xicommands edit -->
+ <!-- table xicommands view --> 
+ [#if VIEW_MODE="view_xicommands"#]
+   [#inc xicommands_view.html#]
+ [#endif VIEW_MODE#]
+ <!-- / table xicommands view -->
+ [#endif DATA_SOURCE#]
