@@ -104,10 +104,27 @@
        if (file_exists(DIR_MODULES.'devices/devices.class.php')) {
            if ($properties[$i]['TITLE']=='motion') {
                $properties[$i]['SDEVICE_TYPE']='motion';
-           } elseif ($properties[$i]['TITLE']=='click' || $properties[$i]['TITLE']=='double_click' || $properties[$i]['TITLE']=='long_click_press'  || $properties[$i]['TITLE']=='long_click_release') {
+           } elseif ($properties[$i]['TITLE']=='click' || 
+                     $properties[$i]['TITLE']=='double_click' || 
+                     $properties[$i]['TITLE']=='long_click_press'  || 
+                     $properties[$i]['TITLE']=='long_click_release' ||
+                     $properties[$i]['TITLE']=='flip90' ||
+                     $properties[$i]['TITLE']=='flip180' ||
+                     $properties[$i]['TITLE']=='move' ||
+                     $properties[$i]['TITLE']=='tap_twice' ||
+                     $properties[$i]['TITLE']=='shake_air' ||
+                     $properties[$i]['TITLE']=='swing' ||
+                     $properties[$i]['TITLE']=='alert' ||
+                     $properties[$i]['TITLE']=='free_fall' ||
+                     $properties[$i]['TITLE']=='rotate'
+                     ) {
                $properties[$i]['SDEVICE_TYPE']='button';
            } elseif ($properties[$i]['TITLE']=='status') {
                $properties[$i]['SDEVICE_TYPE']='openclose';
+           } elseif ($properties[$i]['TITLE']=='temperature') {
+               $properties[$i]['SDEVICE_TYPE']='sensor_temp';
+           } elseif ($properties[$i]['TITLE']=='humidity') {
+               $properties[$i]['SDEVICE_TYPE']='sensor_humidity';
            }
        }
 
