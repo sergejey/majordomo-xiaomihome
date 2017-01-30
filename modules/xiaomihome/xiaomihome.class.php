@@ -7,7 +7,7 @@
 * @version 0.1 (wizard, 17:01:07 [Jan 28, 2017])
 */
 //
-//
+// https://github.com/louisZL/lumi-gateway-local-api
 
 Define('XIAOMI_MULTICAST_PORT',9898);
 Define('XIAOMI_MULTICAST_ADDRESS','224.0.0.50');
@@ -150,9 +150,33 @@ function run() {
                     $command='rgb';
                     $value=dechex($message_data['data']['rgb']);
                 }
+                if ($command=='report' && isset($message_data['data']['temperature']) && $message_data['model']=='sensor_ht') {
+                    $command='temperature';
+                    $value=round(((int)$message_data['data']['temperature'])/100,2);
+                }
+                if ($command=='heartbeat' && isset($message_data['data']['temperature']) && $message_data['model']=='sensor_ht') {
+                    $command='temperature';
+                    $value=round(((int)$message_data['data']['temperature'])/100,2);
+                }
+                if ($command=='report' && isset($message_data['data']['humidity']) && $message_data['model']=='sensor_ht') {
+                    $command='humidity';
+                    $value=round(((int)$message_data['data']['humidity'])/100,2);
+                }
                 if ($command=='report' && $message_data['model']=='switch') {
                     $value=1;
                     $command=$message_data['data']['status'];
+                }
+                if ($command=='report' && $message_data['model']=='cube') {
+                    $value=1;
+                    $command=$message_data['data']['status'];
+                }
+                if ($command=='report' && $message_data['model']=='plug') {
+                    if ($message_data['data']['status']=='on') {
+                        $value=1;
+                    } else {
+                        $value=0;
+                    }
+                    $command='status';
                 }
                 if ($command=='report' && $message_data['model']=='motion') {
                     $value=1;
@@ -166,7 +190,6 @@ function run() {
                     }
                     $command='status';
                 }
-
                 if (!isset($value)) {
                     $value=json_encode($message_data['data']);
                 }
