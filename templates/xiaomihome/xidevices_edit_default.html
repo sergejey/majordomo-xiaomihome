@@ -17,34 +17,45 @@
  <#LANG_TITLE#>:
  (*)
  </label>
- <div class="col-lg-4"><input type="text" class="form-control" name="title" value="[#TITLE#]" id="title"></div>
+ <div class="col-lg-8"><input type="text" class="form-control" name="title" value="[#TITLE#]" id="title"></div>
 </div>
+
+ [#if TYPE="gateway"#]
+ <div class="form-group">
+  <label class="col-lg-3 control-label"[#if ERR_GATE_KEY#] style="color:red;font-weight:bold"[#endif#]>
+   Key:
+  </label>
+  <div class="col-lg-8"><input type="text" class="form-control" name="gate_key" value="[#GATE_KEY#]" id="title"></div>
+ </div>
+ [#endif TYPE#]
 
  <div class="form-group">
   <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
    <#LANG_TYPE#>:
   </label>
-  <div class="col-lg-4">[#TYPE#]</div>
+  <div class="col-lg-8">[#TYPE#]</div>
  </div>
+
+
 
 <!-- SID (varchar) -->
 <div class="form-group">
  <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
  SID:
  </label>
- <div class="col-lg-4">[#SID#]</div>
+ <div class="col-lg-8">[#SID#]</div>
 </div>
 <!-- UPDATED (datetime) -->
 <div class="form-group">
  <label class="col-lg-3 control-label"[#if ERR_UPDATED#] style="color:red;font-weight:bold"[#endif#]>
  <#LANG_UPDATED#>:
  </label>
- <div class="col-lg-4">
+ <div class="col-lg-8">
 [#UPDATED#]
  </div>
 </div>
 <div class="form-group">
-        <div class="col-lg-offset-3 col-lg-4">
+        <div class="col-lg-offset-3 col-lg-8">
  [#if ID!=""#]
  <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_SUBMIT#></button>
  [#else ID#]

@@ -138,6 +138,9 @@ function run() {
                 $device['TITLE']=ucfirst($device['TYPE']).' '.date('Y-m-d');
                 $device['ID']=SQLInsert('xidevices',$device_type);
             }
+            if ($message_data['token']!='') {
+                $device['TOKEN']=$message_data['token'];
+            }
             $device['UPDATED']=date('Y-m-d H:i:s');
             SQLUpdate('xidevices',$device);
 
@@ -366,7 +369,8 @@ xicommands -
  xidevices: TITLE varchar(100) NOT NULL DEFAULT ''
  xidevices: TYPE varchar(100) NOT NULL DEFAULT '' 
  xidevices: SID varchar(255) NOT NULL DEFAULT ''
- xidevices: GATE_KEY varchar(255) NOT NULL DEFAULT '' 
+ xidevices: GATE_KEY varchar(255) NOT NULL DEFAULT ''
+ xidevices: TOKEN varchar(255) NOT NULL DEFAULT ''  
  xidevices: PARENT_ID int(10) unsigned NOT NULL DEFAULT '0' 
  xidevices: UPDATED datetime
  

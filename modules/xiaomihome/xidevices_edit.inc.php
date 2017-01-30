@@ -18,6 +18,12 @@
     $out['ERR_TITLE']=1;
     $ok=0;
    }
+      
+      if ($rec['TYPE']=='gateway') {
+          global $gate_key;
+          $rec['GATE_KEY']=$gate_key;
+      }
+      
   }
   // step: data
   if ($this->tab=='data') {
@@ -83,8 +89,8 @@
       $properties[$i]['TITLE']=trim(${'title'.$properties[$i]['ID']});
       global ${'value'.$properties[$i]['ID']};
       $properties[$i]['VALUE']=trim(${'value'.$properties[$i]['ID']});
-      global ${'linked_object'.$properties[$i]['ID']};
       */
+      global ${'linked_object'.$properties[$i]['ID']};
       $properties[$i]['LINKED_OBJECT']=trim(${'linked_object'.$properties[$i]['ID']});
       global ${'linked_property'.$properties[$i]['ID']};
       $properties[$i]['LINKED_PROPERTY']=trim(${'linked_property'.$properties[$i]['ID']});
