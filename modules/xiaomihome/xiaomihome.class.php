@@ -166,9 +166,13 @@ function run() {
                     $value=1;
                     $command=$message_data['data']['status'];
                 }
-                if ($command=='report' && $message_data['model']=='cube') {
+                if ($command=='report' && isset($message_data['data']['status']) && $message_data['model']=='cube') {
                     $value=1;
                     $command=$message_data['data']['status'];
+                }
+                if ($command=='report' && isset($message_data['data']['rotate']) && $message_data['model']=='cube') {
+                    $value=$message_data['data']['rotate'];
+                    $command='rotate';
                 }
                 if ($command=='report' && $message_data['model']=='plug') {
                     if ($message_data['data']['status']=='on') {
