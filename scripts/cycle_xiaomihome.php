@@ -33,7 +33,7 @@ if( !socket_bind($sock, "0.0.0.0", XIAOMI_MULTICAST_PORT) )
 }
 echo "Socket bind OK \n";
 socket_set_option($sock, SOL_SOCKET,SO_BROADCAST, 1);
-socket_set_option($sock, SOL_SOCKET,SO_RCVTIMEO,array("sec"=>10,"usec"=>0));
+socket_set_option($sock, SOL_SOCKET,SO_RCVTIMEO,array("sec"=>1,"usec"=>0));
 socket_set_option($sock, IPPROTO_IP, IP_MULTICAST_LOOP, true);
 socket_set_option($sock, IPPROTO_IP, IP_MULTICAST_TTL, 32);
 socket_set_option($sock, IPPROTO_IP, MCAST_JOIN_GROUP, array("group"=>XIAOMI_MULTICAST_ADDRESS,"interface"=>0,"source"=>0));
@@ -48,6 +48,7 @@ while (1) {
         $total = count($queue);
         for ($i = 0; $i < $total; $i++) {
             $data=$queue[$i]['DATA'];
+            echo date('H:i:s')." Sending ".$data."\n";
             $ip=$queue[$i]['IP'];
             $xiaomihome_module->sendMessage($data,$ip,$sock);
             SQLExec("DELETE FROM xiqueue WHERE ID=".$queue[$i]['ID']);
@@ -56,7 +57,8 @@ while (1) {
     $buf='';
     @$r = socket_recvfrom($sock, $buf, 1024, 0, $remote_ip, $remote_port);
     if ($buf!='') {
-        //echo "Message: ".$buf."\n";
+        //echo date('H:i:s')." Message: ".$buf."\n";
+        $gate_ip=$remote_ip;
         $url=BASE_URL.'/ajax/xiaomihome.html?op=process&message='.urlencode($buf)."&ip=".urlencode($remote_ip);
         $res = get_headers($url);
         //$xiaomihome_module->processMessage($buf, $remote_ip, $sock);

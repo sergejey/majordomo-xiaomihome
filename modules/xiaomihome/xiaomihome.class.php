@@ -8,6 +8,9 @@
 */
 //
 // https://github.com/louisZL/lumi-gateway-local-api
+// https://github.com/illxi/lumi-gateway-local-api (english)
+// https://github.com/lazcad/homeassistant/blob/master/components/xiaomi.py
+// https://github.com/illxi/lumi-gateway-local-api/blob/master/device_read_write.md
 
 Define('XIAOMI_MULTICAST_PORT',9898);
 Define('XIAOMI_MULTICAST_ADDRESS','224.0.0.50');
@@ -141,6 +144,7 @@ function run() {
             if ($message_data['token']!='') {
                 $device['TOKEN']=$message_data['token'];
             }
+            $device['GATE_IP']=$ip;
             $device['UPDATED']=date('Y-m-d H:i:s');
             SQLUpdate('xidevices',$device);
 
@@ -151,7 +155,7 @@ function run() {
                 }
                 if ($command=='report' && isset($message_data['data']['rgb']) && $message_data['model']=='gateway') {
                     $command='rgb';
-                    $value=dechex($message_data['data']['rgb']);
+                    $value=substr(dechex($message_data['data']['rgb']),-6);
                 }
                 if ($command=='report' && isset($message_data['data']['temperature']) && $message_data['model']=='sensor_ht') {
                     $command='temperature';
@@ -223,8 +227,7 @@ function run() {
     }
 
     function sendMessage($message, $ip, $sock) {
-        $payload=json_encode($data);
-        socket_sendto($sock, $payload, strlen($payload), 0, $ip, XIAOMI_MULTICAST_PORT);
+        socket_sendto($sock, $message, strlen($message), 0, $ip, XIAOMI_MULTICAST_PORT);
     }
 
 function admin(&$out) {
@@ -316,19 +319,54 @@ function usual(&$out) {
  function edit_xicommands(&$out, $id) {
   require(DIR_MODULES.$this->name.'/xicommands_edit.inc.php');
  }
+
  function propertySetHandle($object, $property, $value) {
-   $table='xicommands';
-   $properties=SQLSelect("SELECT ID FROM $table WHERE LINKED_OBJECT LIKE '".DBSafe($object)."' AND LINKED_PROPERTY LIKE '".DBSafe($property)."'");
+   $properties=SQLSelect("SELECT ID FROM xicommands WHERE xicommands.LINKED_OBJECT LIKE '".DBSafe($object)."' AND xicommands.LINKED_PROPERTY LIKE '".DBSafe($property)."'");
    $total=count($properties);
    if ($total) {
     for($i=0;$i<$total;$i++) {
-     //to-do
+        $command=SQLSelectOne("SELECT xicommands.*, xidevices.TOKEN, xidevices.GATE_IP, xidevices.SID, xidevices.GATE_KEY FROM xicommands LEFT JOIN xidevices ON xicommands.DEVICE_ID=xidevices.ID WHERE xicommands.ID=".(int)$properties[$i]['ID']);
+        $token=$command['TOKEN'];
+        $key=$command['GATE_KEY'];
+        $ip=$command['GATE_IP'];
+        $data=array();
+        $data['sid']=$command['SID'];
+        $data['short_id']=0;
+        $cmd_data=array();
+
+        if ($command['TITLE']=='rgb') {
+            $value=preg_replace('/^#/','',$value);
+            if (strlen($value)<8 && hexdec($value)>0) {
+                $value='ff'.$value;
+            }
+            $sendvalue=hexdec($value);
+
+            $data['cmd']='write';
+            $data['model']='gateway';
+            $cmd_data['rgb']=$sendvalue;
+        }
+
+        if ($data['cmd']) {
+            $cmd_data['key']=$this->makeSignature($token,$key);
+            $data['data']=(json_encode($cmd_data));
+            $que_rec=array();
+            $que_rec['DATA']=json_encode($data);
+            $que_rec['IP']=$ip;
+            $que_rec['ADDED']=date('Y-m-d H:i:s');
+            $que_rec['ID']=SQLInsert('xiqueue',$que_rec);
+        }
     }
    }
  }
- function processCycle() {
-  //to-do
+
+
+ function makeSignature($data,$key) {
+     $iv = hex2bin('17996d093d28ddb3ba695a2e6f58562e');
+     $bin_data=base64_decode(openssl_encrypt($data, 'AES-128-CBC', $key, OPENSSL_ZERO_PADDING,$iv));
+     $res = bin2hex($bin_data);
+     return $res;
  }
+
 /**
 * Install
 *
@@ -370,6 +408,7 @@ xicommands -
  xidevices: TYPE varchar(100) NOT NULL DEFAULT '' 
  xidevices: SID varchar(255) NOT NULL DEFAULT ''
  xidevices: GATE_KEY varchar(255) NOT NULL DEFAULT ''
+ xidevices: GATE_IP varchar(255) NOT NULL DEFAULT '' 
  xidevices: TOKEN varchar(255) NOT NULL DEFAULT ''  
  xidevices: PARENT_ID int(10) unsigned NOT NULL DEFAULT '0' 
  xidevices: UPDATED datetime
