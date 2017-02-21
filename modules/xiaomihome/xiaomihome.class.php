@@ -218,8 +218,13 @@ function run() {
                 if ($cmd_rec['LINKED_OBJECT'] && $cmd_rec['LINKED_PROPERTY']) {
                     setGlobal($cmd_rec['LINKED_OBJECT'].'.'.$cmd_rec['LINKED_PROPERTY'], $value, array($this->name=>'0'));
                 }
-                if ($cmd_rec['LINKED_OBJECT'] && $cmd_rec['LINKED_METHOD'] && ($cmd_rec['VALUE']!=$old_value || $command=='motion')) {
-                    callMethod($cmd_rec['LINKED_OBJECT'].'.'.$cmd_rec['LINKED_METHOD'], $message_data['data'], array($this->name=>'0'));
+                if ($cmd_rec['LINKED_OBJECT'] && $cmd_rec['LINKED_METHOD'] 
+                && ($cmd_rec['VALUE']!=$old_value || 
+                     $command=='motion' || 
+                     $device['TYPE']=='switch' || 
+                     $device['TYPE']=='cube'
+                    )) {
+                    callMethod($cmd_rec['LINKED_OBJECT'].'.'.$cmd_rec['LINKED_METHOD'], $message_data['data']);
                 }
             }
 
