@@ -173,6 +173,14 @@ function run() {
                     $value=1;
                     $command=$message_data['data']['status'];
                 }
+                if ($command=='report' && isset($message_data['channel_0'])) {
+                    $value=1;
+                    $command=$message_data['channel_0'].'0';
+                }
+                if ($command=='report' && isset($message_data['channel_1'])) {
+                    $value=1;
+                    $command=$message_data['channel_1'].'1';
+                }
                 if ($command=='report' && isset($message_data['data']['status']) && $message_data['model']=='cube') {
                     $value=1;
                     $command=$message_data['data']['status'];
@@ -221,6 +229,8 @@ function run() {
                 if ($cmd_rec['LINKED_OBJECT'] && $cmd_rec['LINKED_METHOD'] 
                 && ($cmd_rec['VALUE']!=$old_value || 
                      $command=='motion' || 
+                     $command=='click0' || 
+                     $command=='click1' || 
                      $device['TYPE']=='switch' || 
                      $device['TYPE']=='cube'
                     )) {
