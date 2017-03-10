@@ -113,6 +113,8 @@
            if ($properties[$i]['TITLE']=='motion') {
                $properties[$i]['SDEVICE_TYPE']='motion';
            } elseif ($properties[$i]['TITLE']=='click' || 
+                     $properties[$i]['TITLE']=='click0' || 
+                     $properties[$i]['TITLE']=='click1' || 
                      $properties[$i]['TITLE']=='double_click' || 
                      $properties[$i]['TITLE']=='long_click_press'  || 
                      $properties[$i]['TITLE']=='long_click_release' ||
