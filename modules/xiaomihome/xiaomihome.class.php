@@ -173,13 +173,13 @@ function run() {
                     $value=1;
                     $command=$message_data['data']['status'];
                 }
-                if ($command=='report' && isset($message_data['channel_0'])) {
+                if ($command=='report' && isset($message_data['data']['channel_0'])) {
                     $value=1;
-                    $command=$message_data['channel_0'].'0';
+                    $command=$message_data['data']['channel_0'].'0';
                 }
-                if ($command=='report' && isset($message_data['channel_1'])) {
+                if ($command=='report' && isset($message_data['data']['channel_1'])) {
                     $value=1;
-                    $command=$message_data['channel_1'].'1';
+                    $command=$message_data['data']['channel_1'].'1';
                 }
                 if ($command=='report' && isset($message_data['data']['status']) && $message_data['model']=='cube') {
                     $value=1;
