@@ -129,7 +129,7 @@
                      $properties[$i]['TITLE']=='rotate'
                      ) {
                $properties[$i]['SDEVICE_TYPE']='button';
-           } elseif ($properties[$i]['TITLE']=='status') {
+           } elseif ($properties[$i]['TITLE']=='status' || $properties[$i]['TITLE']=='channel_0' || $properties[$i]['TITLE']=='channel_1') {
                $properties[$i]['SDEVICE_TYPE']='openclose';
            } elseif ($properties[$i]['TITLE']=='temperature') {
                $properties[$i]['SDEVICE_TYPE']='sensor_temp';

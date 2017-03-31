@@ -174,12 +174,26 @@ function run() {
                     $command=$message_data['data']['status'];
                 }
                 if ($command=='report' && isset($message_data['data']['channel_0'])) {
-                    $value=1;
-                    $command=$message_data['data']['channel_0'].'0';
+                    $command='channel_0';
+                    if ($message_data['data']['channel_0']=='on') {
+                     $value=1;
+                    } elseif ($message_data['data']['channel_0']=='off') {
+                     $value=0;
+                    } else {
+                     $value=1;
+                     $command=$message_data['data']['channel_0'].'0';
+                    }
                 }
                 if ($command=='report' && isset($message_data['data']['channel_1'])) {
-                    $value=1;
-                    $command=$message_data['data']['channel_1'].'1';
+                    $command='channel_1';
+                    if ($message_data['data']['channel_1']=='on') {
+                     $value=1;
+                    } elseif ($message_data['data']['channel_1']=='off') {
+                     $value=0;
+                    } else {
+                     $value=1;
+                     $command=$message_data['data']['channel_1'].'0';
+                    }
                 }
                 if ($command=='report' && isset($message_data['data']['status']) && $message_data['model']=='cube') {
                     $value=1;
