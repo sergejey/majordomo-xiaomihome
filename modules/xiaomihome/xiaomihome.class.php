@@ -184,6 +184,12 @@ function run() {
                      $command=$message_data['data']['channel_0'].'0';
                     }
                 }
+
+                if ($command=='report' && isset($message_data['data']['dual_channel'])) {
+                 $command=$message_data['data']['dual_channel'];
+                 $value=1;
+                }
+
                 if ($command=='report' && isset($message_data['data']['channel_1'])) {
                     $command='channel_1';
                     if ($message_data['data']['channel_1']=='on') {
@@ -245,6 +251,7 @@ function run() {
                      $command=='motion' || 
                      $command=='click0' || 
                      $command=='click1' || 
+                     $command=='both_click' || 
                      $device['TYPE']=='switch' || 
                      $device['TYPE']=='cube'
                     )) {
