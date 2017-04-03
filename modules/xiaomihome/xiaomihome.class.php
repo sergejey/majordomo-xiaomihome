@@ -217,7 +217,7 @@ function run() {
                     }
                     $command='status';
                 }
-                if ($command=='report' && $message_data['model']=='motion') {
+                if ($command=='report' && $message_data['model']=='motion' && $message_data['data']['status'] == 'motion') {
                     $value=1;
                     $command='motion';
                 }
