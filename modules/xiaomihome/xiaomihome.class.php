@@ -126,6 +126,7 @@ function run() {
         echo "IP: ".$ip."\n";
         echo "MSG: ".$message."\n";
 
+
         $message_data=json_decode($message,true);
         if (isset($message_data['data'])) {
             $data_text=str_replace('\\"','"',$message_data['data']);
@@ -153,6 +154,7 @@ function run() {
                 if ($command=='heartbeat' && $message_data['model']=='gateway') {
                     $value=$message_data['data']['ip'];
                 }
+
                 if ($command=='report' && isset($message_data['data']['rgb']) && $message_data['model']=='gateway') {
                     $command='rgb';
                     $value=substr(dechex($message_data['data']['rgb']),-6);
@@ -201,6 +203,7 @@ function run() {
                      $command=$message_data['data']['channel_1'].'0';
                     }
                 }
+
                 if ($command=='report' && isset($message_data['data']['status']) && $message_data['model']=='cube') {
                     $value=1;
                     $command=$message_data['data']['status'];
@@ -221,7 +224,19 @@ function run() {
                     $value=1;
                     $command='motion';
                 }
-                if ($command=='report' && $message_data['model']=='magnet') {
+                if ($command=='report' && isset($message_data['data']['no_motion'])) {
+                 $command='no_motion';
+                 $value=$message_data['data']['no_motion'];
+                }
+                if ($command=='report' && isset($message_data['data']['no_close'])) {
+                 $command='no_close';
+                 $value=$message_data['data']['no_close'];
+                }
+                if ($command=='heartbeat' && isset($message_data['data']['voltage'])) {
+                 $command='voltage';
+                 $value=$message_data['data']['voltage'];
+                }
+                if ($command=='report' && isset($message_data['data']['status']) && $message_data['model']=='magnet') {
                     if ($message_data['data']['status']=='close') {
                         $value=1;
                     } else {
@@ -229,9 +244,12 @@ function run() {
                     }
                     $command='status';
                 }
+
                 if (!isset($value)) {
                     $value=json_encode($message_data['data']);
                 }
+
+
                 $cmd_rec=SQLSelectOne("SELECT * FROM xicommands WHERE DEVICE_ID=".$device['ID']." AND TITLE LIKE '".DBSafe($command)."'");
                 if (!$cmd_rec['ID']) {
                     $cmd_rec=array();
