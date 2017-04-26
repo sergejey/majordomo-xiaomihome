@@ -36,6 +36,23 @@
      $new_rec=1;
      $rec['ID']=SQLInsert($table_name, $rec); // adding new record
     }
+
+       $commands=array();
+       if ($rec['TYPE']=='gateway') {
+           $commands[]='ringtone';
+       }
+       if (count($commands)>0) {
+           foreach($commands as $command) {
+               $cmd_rec=SQLSelectOne("SELECT * FROM xicommands WHERE DEVICE_ID=".$rec['ID']." AND TITLE LIKE '".DBSafe($command)."'");
+               if (!$cmd_rec['ID']) {
+                   $cmd_rec=array();
+                   $cmd_rec['DEVICE_ID']=$rec['ID'];
+                   $cmd_rec['TITLE']=$command;
+                   $cmd_rec['ID']=SQLInsert('xicommands',$cmd_rec);
+               }
+           }
+       }
+
     $out['OK']=1;
    } else {
     $out['ERR']=1;
@@ -136,6 +153,8 @@
                $properties[$i]['SDEVICE_TYPE']='sensor_temp';
            } elseif ($properties[$i]['TITLE']=='humidity') {
                $properties[$i]['SDEVICE_TYPE']='sensor_humidity';
+           } elseif ($properties[$i]['TITLE']=='rgb') {
+               $properties[$i]['SDEVICE_TYPE']='rgb';
            }
        }
 

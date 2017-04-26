@@ -11,6 +11,7 @@
 // https://github.com/illxi/lumi-gateway-local-api (english)
 // https://github.com/lazcad/homeassistant/blob/master/components/xiaomi.py
 // https://github.com/illxi/lumi-gateway-local-api/blob/master/device_read_write.md
+// https://github.com/Danielhiversen/homeassistant/pull/6 -- ringtone support
 
 Define('XIAOMI_MULTICAST_PORT',9898);
 Define('XIAOMI_MULTICAST_ADDRESS','224.0.0.50');
@@ -144,6 +145,23 @@ function run() {
                 $device['TYPE']=$message_data['model'];
                 $device['TITLE']=ucfirst($device['TYPE']).' '.date('Y-m-d');
                 $device['ID']=SQLInsert('xidevices',$device_type);
+
+                $commands=array();
+                if ($device['TYPE']=='gateway') {
+                    $commands[]='ringtone';
+                }
+                if (count($commands)>0) {
+                    foreach($commands as $command) {
+                        $cmd_rec=SQLSelectOne("SELECT * FROM xicommands WHERE DEVICE_ID=".$device['ID']." AND TITLE LIKE '".DBSafe($command)."'");
+                        if (!$cmd_rec['ID']) {
+                            $cmd_rec=array();
+                            $cmd_rec['DEVICE_ID']=$device['ID'];
+                            $cmd_rec['TITLE']=$command;
+                            $cmd_rec['ID']=SQLInsert('xicommands',$cmd_rec);
+                        }
+                    }
+                }
+
             }
             if ($message_data['token']!='') {
                 $device['TOKEN']=$message_data['token'];
@@ -179,7 +197,6 @@ function run() {
                      $command='brightness';
                      $value=hexdec(substr($value_str,0,2));
                      $got_commands[]=array('command'=>$command, 'value'=>$value);
-
                     }
                 }
                 if (($message_data['cmd']=='report' || $message_data['cmd']=='write_ack') && $message_data['model']=='gateway') {
@@ -223,24 +240,26 @@ function run() {
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
 
+                if ($message_data['cmd']=='report' && isset($message_data['data']['channel_1'])) {
+                    $command='channel_1';
+                    if ($message_data['data']['channel_1']=='on') {
+                        $value=1;
+                    } elseif ($message_data['data']['channel_1']=='off') {
+                        $value=0;
+                    } else {
+                        $value=1;
+                        $command=$message_data['data']['channel_1'].'1'; //
+                    }
+                    $got_commands[]=array('command'=>$command, 'value'=>$value);
+                }
+
                 if ($message_data['cmd']=='report' && isset($message_data['data']['dual_channel'])) {
                  $command=$message_data['data']['dual_channel'];
                  $value=1;
                  $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
 
-                if ($message_data['cmd']=='report' && isset($message_data['data']['channel_1'])) {
-                    $command='channel_1';
-                    if ($message_data['data']['channel_1']=='on') {
-                     $value=1;
-                    } elseif ($message_data['data']['channel_1']=='off') {
-                     $value=0;
-                    } else {
-                     $value=1;
-                     $command=$message_data['data']['channel_1'].'0';
-                    }
-                    $got_commands[]=array('command'=>$command, 'value'=>$value);
-                }
+
 
                 if ($message_data['cmd']=='report' && isset($message_data['data']['status']) && $message_data['model']=='cube') {
                     $value=1;
@@ -252,13 +271,28 @@ function run() {
                     $command='rotate';
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
-                if ($message_data['cmd']=='report' && $message_data['model']=='plug') {
+                if ($message_data['cmd']=='report' && $message_data['model']=='plug' && isset($message_data['data']['status'])) {
                     if ($message_data['data']['status']=='on') {
                         $value=1;
                     } else {
                         $value=0;
                     }
                     $command='status';
+                    $got_commands[]=array('command'=>$command, 'value'=>$value);
+                }
+                if ($message_data['cmd']=='report' && $message_data['model']=='plug' && isset($message_data['data']['load_voltage'])) {
+                    $value=$message_data['data']['load_voltage'];
+                    $command='load_voltage';
+                    $got_commands[]=array('command'=>$command, 'value'=>$value);
+                }
+                if ($message_data['cmd']=='report' && $message_data['model']=='plug' && isset($message_data['data']['load_power'])) {
+                    $value=$message_data['data']['load_power'];
+                    $command='load_power';
+                    $got_commands[]=array('command'=>$command, 'value'=>$value);
+                }
+                if ($message_data['cmd']=='report' && $message_data['model']=='plug' && isset($message_data['data']['power_consumed'])) {
+                    $value=$message_data['data']['power_consumed'];
+                    $command='power_consumed';
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
                 if ($message_data['cmd']=='report' && $message_data['model']=='motion' && $message_data['data']['status'] == 'motion') {
@@ -492,7 +526,7 @@ function usual(&$out) {
    $total=count($properties);
    if ($total) {
     for($i=0;$i<$total;$i++) {
-        $command=SQLSelectOne("SELECT xicommands.*, xidevices.TOKEN, xidevices.GATE_IP, xidevices.SID, xidevices.GATE_KEY FROM xicommands LEFT JOIN xidevices ON xicommands.DEVICE_ID=xidevices.ID WHERE xicommands.ID=".(int)$properties[$i]['ID']);
+        $command=SQLSelectOne("SELECT xicommands.*, xidevices.TYPE, xidevices.TOKEN, xidevices.GATE_IP, xidevices.SID, xidevices.GATE_KEY FROM xicommands LEFT JOIN xidevices ON xicommands.DEVICE_ID=xidevices.ID WHERE xicommands.ID=".(int)$properties[$i]['ID']);
         $token=$command['TOKEN'];
         $key=$command['GATE_KEY'];
         $ip=$command['GATE_IP'];
@@ -501,6 +535,33 @@ function usual(&$out) {
         $data['short_id']=0;
         $cmd_data=array();
 
+        if ($command['TITLE']=='status' && $command['TYPE']=='plug') {
+            $data['cmd']='write';
+            $data['model']=$command['TYPE'];
+            if ($value) {
+                $cmd_data['status']='on';
+            } else {
+                $cmd_data['status']='off';
+            }
+        }
+        if ($command['TITLE']=='channel_0') {
+            $data['cmd']='write';
+            $data['model']=$command['TYPE'];
+            if ($value) {
+                $cmd_data['channel_0']='on';
+            } else {
+                $cmd_data['channel_0']='off';
+            }
+        }
+        if ($command['TITLE']=='channel_1') {
+            $data['cmd']='write';
+            $data['model']=$command['TYPE'];
+            if ($value) {
+                $cmd_data['channel_1']='on';
+            } else {
+                $cmd_data['channel_1']='off';
+            }
+        }
         if ($command['TITLE']=='brightness') {
                 $rgb_cmd=SQLSelectOne("SELECT xicommands.* FROM xicommands WHERE TITLE='rgb' AND DEVICE_ID=".$command['DEVICE_ID']);
                 if ($rgb_cmd['ID']) {
@@ -530,11 +591,32 @@ function usual(&$out) {
             $cmd_data['rgb']=$sendvalue;
         }
 
+        if ($command['TITLE']=='ringtone') {
+            $data['cmd']='write';
+            $data['model']='gateway';
+            if ($value==='' || $value=='stop') {
+                $cmd_data['mid']=10000;
+            } else {
+                $vol='';
+                $tmp=explode(',',$value);
+                if ($tmp[1]) {
+                    $value=trim($tmp[0]);
+                    $vol=trim($tmp[1]);
+                }
+                $cmd_data['mid']=(int)$value;
+                if ($vol!='') {
+                    $cmd_data['vol']=(int)$vol;
+                }
+            }
+        }
+
+
         if ($data['cmd']) {
             $cmd_data['key']=$this->makeSignature($token,$key);
             $data['data']=(json_encode($cmd_data));
             $que_rec=array();
             $que_rec['DATA']=json_encode($data);
+            //echo "Adding: ".$que_rec['DATA'];
             $que_rec['IP']=$ip;
             $que_rec['ADDED']=date('Y-m-d H:i:s');
             $que_rec['ID']=SQLInsert('xiqueue',$que_rec);
