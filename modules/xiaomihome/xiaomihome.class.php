@@ -527,9 +527,20 @@ function usual(&$out) {
    if ($total) {
     for($i=0;$i<$total;$i++) {
         $command=SQLSelectOne("SELECT xicommands.*, xidevices.TYPE, xidevices.TOKEN, xidevices.GATE_IP, xidevices.SID, xidevices.GATE_KEY FROM xicommands LEFT JOIN xidevices ON xicommands.DEVICE_ID=xidevices.ID WHERE xicommands.ID=".(int)$properties[$i]['ID']);
-        $token=$command['TOKEN'];
-        $key=$command['GATE_KEY'];
         $ip=$command['GATE_IP'];
+        if ($command['TYPE']!='gateway') {
+            $gate=SQLSelectOne("SELECT * FROM xidevices WHERE TYPE='gateway' AND GATE_IP='".$ip."'");
+            if ($gate['ID']) {
+                $key=$gate['GATE_KEY'];
+                $token=$gate['TOKEN'];
+            } else {
+                DebMes('Cannot find gateway key');
+            }
+        } else {
+            $token=$command['TOKEN'];
+            $key=$command['GATE_KEY'];
+        }
+        
         $data=array();
         $data['sid']=$command['SID'];
         $data['short_id']=0;
