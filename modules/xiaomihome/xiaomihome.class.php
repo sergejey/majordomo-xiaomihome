@@ -266,7 +266,7 @@ function run() {
                     $command=$message_data['data']['status'];
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
-                if ($message_data['cmd']=='report' && isset($message_data['data']['rotate']) && $message_data['model']=='cube') {
+                if (isset($message_data['data']['rotate'])) {
                     $value=$message_data['data']['rotate'];
                     $command='rotate';
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
@@ -280,17 +280,17 @@ function run() {
                     $command='status';
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
-                if ($message_data['cmd']=='report' && $message_data['model']=='plug' && isset($message_data['data']['load_voltage'])) {
+                if (isset($message_data['data']['load_voltage'])) {
                     $value=$message_data['data']['load_voltage'];
                     $command='load_voltage';
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
-                if ($message_data['cmd']=='report' && $message_data['model']=='plug' && isset($message_data['data']['load_power'])) {
+                if (isset($message_data['data']['load_power'])) {
                     $value=$message_data['data']['load_power'];
                     $command='load_power';
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
-                if ($message_data['cmd']=='report' && $message_data['model']=='plug' && isset($message_data['data']['power_consumed'])) {
+                if (isset($message_data['data']['power_consumed'])) {
                     $value=$message_data['data']['power_consumed'];
                     $command='power_consumed';
                     $got_commands[]=array('command'=>$command, 'value'=>$value);
