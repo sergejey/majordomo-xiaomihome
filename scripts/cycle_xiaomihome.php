@@ -13,59 +13,72 @@ include_once(DIR_MODULES . 'xiaomihome/xiaomihome.class.php');
 $xiaomihome_module = new xiaomihome();
 $xiaomihome_module->getConfig();
 echo date("H:i:s") . " running " . basename(__FILE__) . PHP_EOL;
-$latest_check=0;
+$latest_check = 0;
 
-//Create a UDP socket
-if(!($sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)))
+$sock = 0;
+function xiaomi_socket_connect()
 {
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-    die("Couldn't create socket: [$errorcode] $errormsg \n");
-}
-echo "Socket created \n";
-
+    global $sock;
+    //Create a UDP socket
+    if (!($sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP))) {
+        $errorcode = socket_last_error();
+        $errormsg = socket_strerror($errorcode);
+        die("Couldn't create socket: [$errorcode] $errormsg \n");
+    }
+    echo "Socket created \n";
+    DebMes("Socket created",'xiaomi');
 // Bind the source address
-if( !socket_bind($sock, "0.0.0.0", XIAOMI_MULTICAST_PORT) )
-{
-    $errorcode = socket_last_error();
-    $errormsg = socket_strerror($errorcode);
-    die("Could not bind socket : [$errorcode] $errormsg \n");
+    if (!socket_bind($sock, "0.0.0.0", XIAOMI_MULTICAST_PORT)) {
+        $errorcode = socket_last_error();
+        $errormsg = socket_strerror($errorcode);
+        die("Could not bind socket : [$errorcode] $errormsg \n");
+    }
+    echo "Socket bind OK \n";
+    DebMes("Socket bind OK",'xiaomi');
+    socket_set_option($sock, SOL_SOCKET, SO_BROADCAST, 1);
+    socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 1, "usec" => 0));
+    socket_set_option($sock, IPPROTO_IP, IP_MULTICAST_LOOP, true);
+    socket_set_option($sock, IPPROTO_IP, IP_MULTICAST_TTL, 32);
+    socket_set_option($sock, IPPROTO_IP, MCAST_JOIN_GROUP, array("group" => XIAOMI_MULTICAST_ADDRESS, "interface" => 0, "source" => 0));
 }
-echo "Socket bind OK \n";
-socket_set_option($sock, SOL_SOCKET,SO_BROADCAST, 1);
-socket_set_option($sock, SOL_SOCKET,SO_RCVTIMEO,array("sec"=>1,"usec"=>0));
-socket_set_option($sock, IPPROTO_IP, IP_MULTICAST_LOOP, true);
-socket_set_option($sock, IPPROTO_IP, IP_MULTICAST_TTL, 32);
-socket_set_option($sock, IPPROTO_IP, MCAST_JOIN_GROUP, array("group"=>XIAOMI_MULTICAST_ADDRESS,"interface"=>0,"source"=>0));
+
+xiaomi_socket_connect();
+$latest_data_received = time();
 
 while (1) {
     if (time() - $checked_time > 5) {
         $checked_time = time();
         setGlobal((str_replace('.php', '', basename(__FILE__))) . 'Run', time(), 1);
     }
-    $queue=SQLSelect("SELECT * FROM xiqueue ORDER BY ID");
+    $queue = SQLSelect("SELECT * FROM xiqueue ORDER BY ID");
     if ($queue[0]['ID']) {
         $total = count($queue);
         for ($i = 0; $i < $total; $i++) {
-            $data=$queue[$i]['DATA'];
-            echo date('H:i:s')." Sending ".$data."\n";
-            $ip=$queue[$i]['IP'];
-            $xiaomihome_module->sendMessage($data,$ip,$sock);
-            SQLExec("DELETE FROM xiqueue WHERE ID=".$queue[$i]['ID']);
+            $data = $queue[$i]['DATA'];
+            echo date('H:i:s') . " Sending " . $data . "\n";
+            $ip = $queue[$i]['IP'];
+            $xiaomihome_module->sendMessage($data, $ip, $sock);
+            SQLExec("DELETE FROM xiqueue WHERE ID=" . $queue[$i]['ID']);
         }
     }
-    $buf='';
+    $buf = '';
     @$r = socket_recvfrom($sock, $buf, 1024, 0, $remote_ip, $remote_port);
-    if ($buf!='') {
+    if ($buf != '') {
         //echo date('H:i:s')." Message: ".$buf."\n";
-        $gate_ip=$remote_ip;
-        $url=BASE_URL.'/ajax/xiaomihome.html?op=process&message='.urlencode($buf)."&ip=".urlencode($remote_ip);
+        $gate_ip = $remote_ip;
+        $url = BASE_URL . '/ajax/xiaomihome.html?op=process&message=' . urlencode($buf) . "&ip=" . urlencode($remote_ip);
         $res = get_headers($url);
+        $latest_data_received = time();
         //$xiaomihome_module->processMessage($buf, $remote_ip, $sock);
     }
-    if (file_exists('./reboot') || IsSet($_GET['onetime']))
-    {
+    if (file_exists('./reboot') || IsSet($_GET['onetime'])) {
         break;
+    }
+    if (time()-$latest_data_received>60) {
+        // 1 minute timeout reconnect
+        DebMes("Xiaomi data timeout...",'xiaomi');
+        socket_close($sock);
+        xiaomi_socket_connect();
     }
 }
 socket_close($sock);
