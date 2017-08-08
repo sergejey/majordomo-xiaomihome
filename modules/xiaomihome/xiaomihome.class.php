@@ -259,8 +259,16 @@ function run() {
                  $got_commands[]=array('command'=>$command, 'value'=>$value);
                 }
 
-
-
+                if (isset($message_data['data']['alarm'])) {
+                    $command='alarm';
+                    $value=$message_data['data']['alarm'];
+                    $got_commands[]=array('command'=>$command, 'value'=>$value);
+                }
+                if (isset($message_data['data']['density'])) {
+                    $command='density';
+                    $value=$message_data['data']['density'];
+                    $got_commands[]=array('command'=>$command, 'value'=>$value);
+                }
                 if ($message_data['cmd']=='report' && isset($message_data['data']['status']) && $message_data['model']=='cube') {
                     $value=1;
                     $command=$message_data['data']['status'];
@@ -359,7 +367,8 @@ function run() {
                      $command=='motion' || 
                      $command=='click0' || 
                      $command=='click1' || 
-                     $command=='both_click' || 
+                     $command=='both_click' ||
+                     $command=='alarm' ||
                      $device['TYPE']=='switch' || 
                      $device['TYPE']=='cube'
                     )) {
