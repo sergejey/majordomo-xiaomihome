@@ -12,6 +12,13 @@ $ctl = new control_modules();
 include_once(DIR_MODULES . 'xiaomihome/xiaomihome.class.php');
 $xiaomihome_module = new xiaomihome();
 $xiaomihome_module->getConfig();
+
+$gw_ip = $xiaomihome_module->config['API_IP'];
+$bind_ip = $xiaomihome_module->config['API_BIND'];
+if (!$bind_ip) {
+    $bind_ip = "0.0.0.0";
+}
+
 echo date("H:i:s") . " running " . basename(__FILE__) . PHP_EOL;
 $latest_check = 0;
 
@@ -19,27 +26,36 @@ $sock = 0;
 function xiaomi_socket_connect()
 {
     global $sock;
+    global $bind_ip;
     //Create a UDP socket
     if (!($sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP))) {
         $errorcode = socket_last_error();
         $errormsg = socket_strerror($errorcode);
+        DebMes("Failed to create socket [$errorcode] $errormsg ",'xiaomi');
         die("Couldn't create socket: [$errorcode] $errormsg \n");
     }
     echo "Socket created \n";
     DebMes("Socket created",'xiaomi');
 // Bind the source address
-    if (!socket_bind($sock, "0.0.0.0", XIAOMI_MULTICAST_PORT)) {
+    if (!socket_bind($sock, $bind_ip, XIAOMI_MULTICAST_PORT)) {
         $errorcode = socket_last_error();
         $errormsg = socket_strerror($errorcode);
+        DebMes("Could not bind socket (Binding IP: $bind_ip) [$errorcode] $errormsg",'xiaomi');
         die("Could not bind socket : [$errorcode] $errormsg \n");
     }
     echo "Socket bind OK \n";
-    DebMes("Socket bind OK",'xiaomi');
+    DebMes("Socket bind OK (Binding IP: $bind_ip)",'xiaomi');
     socket_set_option($sock, SOL_SOCKET, SO_BROADCAST, 1);
     socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 1, "usec" => 0));
     socket_set_option($sock, IPPROTO_IP, IP_MULTICAST_LOOP, true);
     socket_set_option($sock, IPPROTO_IP, IP_MULTICAST_TTL, 32);
     socket_set_option($sock, IPPROTO_IP, MCAST_JOIN_GROUP, array("group" => XIAOMI_MULTICAST_ADDRESS, "interface" => 0, "source" => 0));
+
+    $message = '{"cmd":"whois"}';
+
+    DebMes("Sending discovery packet to ".XIAOMI_MULTICAST_ADDRESS." ($message)",'xiaomi');
+    socket_sendto($sock, $message, strlen($message), 0, XIAOMI_MULTICAST_ADDRESS, XIAOMI_MULTICAST_PORT);
+
 }
 
 xiaomi_socket_connect();
@@ -56,7 +72,11 @@ while (1) {
         for ($i = 0; $i < $total; $i++) {
             $data = $queue[$i]['DATA'];
             echo date('H:i:s') . " Sending " . $data . "\n";
-            $ip = $queue[$i]['IP'];
+            if ($gw_ip != "") {
+                $ip = $gw_ip;
+            } else {
+                $ip = $queue[$i]['IP'];
+            }
             $xiaomihome_module->sendMessage($data, $ip, $sock);
             SQLExec("DELETE FROM xiqueue WHERE ID=" . $queue[$i]['ID']);
         }
@@ -65,6 +85,7 @@ while (1) {
     @$r = socket_recvfrom($sock, $buf, 1024, 0, $remote_ip, $remote_port);
     if ($buf != '') {
         //echo date('H:i:s')." Message: ".$buf."\n";
+        //DebMes("Received message ($buf) from $remote_ip",'xiaomi');
         $gate_ip = $remote_ip;
         $url = BASE_URL . '/ajax/xiaomihome.html?op=process&message=' . urlencode($buf) . "&ip=" . urlencode($remote_ip);
         $res = get_headers($url);

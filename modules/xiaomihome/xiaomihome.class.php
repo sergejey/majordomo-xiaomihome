@@ -401,6 +401,20 @@ class xiaomihome extends module
 
     function admin(&$out)
     {
+
+        $this->getConfig();
+        $out['API_IP']=$this->config['API_IP'];
+        $out['API_BIND']=$this->config['API_BIND'];
+        if ($this->view_mode=='update_settings') {
+            global $api_ip;
+            $this->config['API_IP']=trim($api_ip);
+            global $api_bind;
+            $this->config['API_BIND']=trim($api_bind);
+            $this->saveConfig();
+            setGlobal('cycle_xiaomihomeControl', 'restart');
+            $this->redirect("?");
+        }
+
         if (isset($this->data_source) && !$_GET['data_source'] && !$_POST['data_source']) {
             $out['SET_DATASOURCE'] = 1;
         }
