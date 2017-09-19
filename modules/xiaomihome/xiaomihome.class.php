@@ -233,7 +233,7 @@ class xiaomihome extends module
                     $value = round($value * 7.50062,2);
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
-                if ($message_data['cmd'] == 'report' && $message_data['model'] == 'switch') {
+                if ($message_data['cmd'] == 'report' && ($message_data['model'] == 'switch' || $message_data['model'] == 'sensor_switch.aq2')) {
                     $value = 1;
                     $command = $message_data['data']['status'];
                     $got_commands[] = array('command' => $command, 'value' => $value);
@@ -314,7 +314,7 @@ class xiaomihome extends module
                     $command = 'power_consumed';
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
-                if ($message_data['cmd'] == 'report' && $message_data['model'] == 'motion' && $message_data['data']['status'] == 'motion') {
+                if ($message_data['cmd'] == 'report' && $message_data['data']['status'] == 'motion') {
                     $value = 1;
                     $command = 'motion';
                     $got_commands[] = array('command' => $command, 'value' => $value);
@@ -336,7 +336,7 @@ class xiaomihome extends module
                     $value = $message_data['data']['voltage'];
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
-                if ($message_data['cmd'] == 'report' && isset($message_data['data']['status']) && $message_data['model'] == 'magnet') {
+                if ($message_data['cmd'] == 'report' && isset($message_data['data']['status']) && ($message_data['model'] == 'magnet' || $message_data['model'] == 'sensor_magnet.aq2')) {
                     if ($message_data['data']['status'] == 'close') {
                         $value = 1;
                     } else {
@@ -380,6 +380,7 @@ class xiaomihome extends module
                             $command == 'click1' ||
                             $command == 'both_click' ||
                             $command == 'alarm' ||
+                            $device['TYPE'] == 'sensor_switch.aq2' ||
                             $device['TYPE'] == 'switch' ||
                             $device['TYPE'] == 'cube'
                         )
