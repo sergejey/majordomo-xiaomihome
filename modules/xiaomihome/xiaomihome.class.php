@@ -326,6 +326,22 @@ class xiaomihome extends module
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
 
+                if ($message_data['data']['status'] == 'iam') {
+                    $command = 'iam';
+                    $value = 1;
+                    $got_commands[] = array('command' => $command, 'value' => $value);
+                }
+                if ($message_data['data']['status'] == 'leak') {
+                    $command = 'leak';
+                    $value = 1;
+                    $got_commands[] = array('command' => $command, 'value' => $value);
+                }
+                if ($message_data['data']['status'] == 'no_leak') {
+                    $command = 'leak';
+                    $value = 0;
+                    $got_commands[] = array('command' => $command, 'value' => $value);
+                }
+
                 if (isset($message_data['data']['no_close'])) {
                     $command = 'no_close';
                     $value = $message_data['data']['no_close'];
@@ -380,9 +396,12 @@ class xiaomihome extends module
                             $command == 'click1' ||
                             $command == 'both_click' ||
                             $command == 'alarm' ||
+                            $command == 'iam' ||
+                            $command == 'leak' ||
                             $device['TYPE'] == 'sensor_switch.aq2' ||
                             $device['TYPE'] == 'switch' ||
-                            $device['TYPE'] == 'cube'
+                            $device['TYPE'] == 'cube' ||
+                            0
                         )
                     ) {
                         callMethod($cmd_rec['LINKED_OBJECT'] . '.' . $cmd_rec['LINKED_METHOD'], $message_data['data']);
