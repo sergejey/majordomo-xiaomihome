@@ -208,6 +208,11 @@ class xiaomihome extends module
                         $got_commands[] = array('command' => $command, 'value' => $value);
                     }
                 }
+                if (isset($message_data['data']['lux'])) {
+                    $command = 'lux';
+                    $value = $message_data['data']['lux'];
+                    $got_commands[] = array('command' => $command, 'value' => $value);
+                }
                 if (isset($message_data['data']['illumination'])) {
                     $command = 'illumination';
                     $value = $message_data['data']['illumination'];
