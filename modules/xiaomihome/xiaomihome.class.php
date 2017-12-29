@@ -754,7 +754,7 @@ class xiaomihome extends module
      *
      * @access private
      */
-    function dbInstall()
+    function dbInstall($data = '')
     {
         /*
         xidevices -
