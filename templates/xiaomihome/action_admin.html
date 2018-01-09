@@ -5,9 +5,9 @@
  [#if VIEW_MODE="search_xidevices" || VIEW_MODE=""#]
 
  <div>
-     [ <a href="#" onClick="$('#api_settings').toggle();return false;"><#LANG_SETUP#></a> ]
+    <a class="btn btn-default" href="#api_settings" data-toggle="collapse"><i class="glyphicon glyphicon-cog"></i> <#LANG_SETUP#></a>
  </div>
- <div style="display:none" id='api_settings'>
+ <div class="collapse" id='api_settings'>
      &nbsp;
      <form action="?" method="post" enctype="multipart/form-data" name="frmEdit" class="form-horizontal">
          <fieldset>
