@@ -27,6 +27,7 @@
 <form action="?" method="post" name="frmList_xidevices" style="padding:0px" class="form">
 <table  align=center class="table table-striped">
  <tr>
+  <th></th>
   <th><#LANG_TITLE#></th>
   <th><#LANG_TYPE#></th>
   <th>SID</th>
@@ -37,8 +38,9 @@
 <tbody>
 [#begin RESULT#]
 <tr style="height:52px" class="hover_btn2">
- <td style="vertical-align:middle"
-  >
+<td style="vertical-align:middle">
+    <img src="../templates/xiaomihome/img/[#TYPE#].png" height="40px" onerror="this.src='../templates/xiaomihome/img/unknown.png'">
+ </td> <td style="vertical-align:middle">
   <b>
    [#TITLE#]
   </a></b>
