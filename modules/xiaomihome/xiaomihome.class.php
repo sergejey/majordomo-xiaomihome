@@ -12,6 +12,7 @@
 // https://github.com/lazcad/homeassistant/blob/master/components/xiaomi.py
 // https://github.com/illxi/lumi-gateway-local-api/blob/master/device_read_write.md
 // https://github.com/Danielhiversen/homeassistant/pull/6 -- ringtone support
+// https://github.com/aqara/opencloud-docs/blob/master/en/development/gateway-LAN-communication.md
 
 Define('XIAOMI_MULTICAST_PORT', 9898);
 Define('XIAOMI_MULTICAST_ADDRESS', '224.0.0.50');
@@ -135,9 +136,9 @@ class xiaomihome extends module
 
         //DebMes($message, 'xiaomi');
 
-        echo date('Y-m-d H:i:s') . "\n";
-        echo "IP: " . $ip . "\n";
-        echo "MSG: " . $message . "\n";
+        //echo date('Y-m-d H:i:s') . "\n";
+        //echo "IP: " . $ip . "\n";
+        //echo "MSG: " . $message . "\n";
 
 
         $message_data = json_decode($message, true);
@@ -158,6 +159,9 @@ class xiaomihome extends module
                 $commands = array();
                 if ($device['TYPE'] == 'gateway') {
                     $commands[] = 'ringtone';
+                }
+				if ($device['TYPE'] == 'curtain') {
+                    $commands[] = 'curtain_status';
                 }
                 if (count($commands) > 0) {
                     foreach ($commands as $command) {
@@ -317,6 +321,11 @@ class xiaomihome extends module
                 if (isset($message_data['data']['power_consumed'])) {
                     $value = $message_data['data']['power_consumed'];
                     $command = 'power_consumed';
+                    $got_commands[] = array('command' => $command, 'value' => $value);
+                }
+				if (isset($message_data['data']['curtain_level'])) {
+                    $value = $message_data['data']['curtain_level'];
+                    $command = 'curtain_level';
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
                 if ($message_data['cmd'] == 'report' && $message_data['data']['status'] == 'motion') {
@@ -647,6 +656,21 @@ class xiaomihome extends module
                     } else {
                         $cmd_data['channel_1'] = 'off';
                     }
+                }
+				if ($command['TITLE'] == 'curtain_level') {
+                    $data['cmd'] = 'write';
+                    $data['model'] = $command['TYPE'];
+					$value = (int)$value;
+					if ($value < 0) $value = 0;
+					if ($value > 100) $value = 100;
+                    $cmd_data['curtain_level'] = strval($value);
+                }
+				if ($command['TITLE'] == 'curtain_status') {
+					if ($value == 'open' || $value == 'close' || $value == 'stop' || $value == 'auto') {
+						$data['cmd'] = 'write';
+						$data['model'] = $command['TYPE'];
+						$cmd_data['curtain_status'] = strval($value);
+					} else return;
                 }
                 if ($command['TITLE'] == 'brightness') {
                     $rgb_cmd = SQLSelectOne("SELECT xicommands.* FROM xicommands WHERE TITLE='rgb' AND DEVICE_ID=" . $command['DEVICE_ID']);
