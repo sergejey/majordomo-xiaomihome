@@ -299,7 +299,7 @@ class xiaomihome extends module
                     $command = 'rotate';
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
-                if ($message_data['cmd'] == 'report' && $message_data['model'] == 'plug' && isset($message_data['data']['status'])) {
+                if ($message_data['cmd'] == 'report' && ($message_data['model'] == 'plug' || $message_data['model'] == 'ctrl_86plug.aq1') && isset($message_data['data']['status'])) {
                     if ($message_data['data']['status'] == 'on') {
                         $value = 1;
                     } else {
@@ -630,8 +630,8 @@ class xiaomihome extends module
                 $data['short_id'] = 0;
                 $cmd_data = array();
 
-                if ($command['TITLE'] == 'status' && $command['TYPE'] == 'plug') {
-                    $data['cmd'] = 'write';
+                if ($command['TITLE'] == 'status' && ($command['TYPE'] == 'plug' || $command['TYPE'] == 'ctrl_86plug.aq1')) {                  
+					$data['cmd'] = 'write';
                     $data['model'] = $command['TYPE'];
                     if ($value) {
                         $cmd_data['status'] = 'on';
