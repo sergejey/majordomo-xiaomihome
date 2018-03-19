@@ -154,7 +154,7 @@ class xiaomihome extends module
                 $device['SID'] = $message_data['sid'];
                 $device['TYPE'] = $message_data['model'];
                 $device['TITLE'] = ucfirst($device['TYPE']) . ' ' . date('Y-m-d');
-                $device['ID'] = SQLInsert('xidevices', $device_type);
+                $device['ID'] = SQLInsert('xidevices', $device);
 
                 $commands = array();
                 if ($device['TYPE'] == 'gateway') {
