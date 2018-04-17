@@ -437,6 +437,13 @@ class xiaomihome extends module
     {
 
         $this->getConfig();
+		
+		if ((time() - gg('cycle_xiaomihomeRun')) < 15 ) {
+			$out['CYCLERUN'] = 1;
+		} else {
+			$out['CYCLERUN'] = 0;
+		}
+		
         $out['API_IP']=$this->config['API_IP'];
         $out['API_BIND']=$this->config['API_BIND'];
         if ($this->view_mode=='update_settings') {
