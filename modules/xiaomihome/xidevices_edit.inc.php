@@ -11,7 +11,7 @@
    $ok=1;
   // step: default
   if ($this->tab=='') {
-  //updating '<%LANG_TITLE%>' (varchar, required)
+  
    global $title;
    $rec['TITLE']=$title;
    if ($rec['TITLE']=='') {
@@ -126,37 +126,60 @@
       }
 
 
-       if (file_exists(DIR_MODULES.'devices/devices.class.php')) {
-           if ($properties[$i]['TITLE']=='motion') {
-               $properties[$i]['SDEVICE_TYPE']='motion';
-           } elseif ($properties[$i]['TITLE']=='click' || 
-                     $properties[$i]['TITLE']=='click0' || 
-                     $properties[$i]['TITLE']=='click1' || 
-                     $properties[$i]['TITLE']=='both_click' || 
-                     $properties[$i]['TITLE']=='double_click' || 
-                     $properties[$i]['TITLE']=='long_click_press'  || 
-                     $properties[$i]['TITLE']=='long_click_release' ||
-                     $properties[$i]['TITLE']=='flip90' ||
-                     $properties[$i]['TITLE']=='flip180' ||
-                     $properties[$i]['TITLE']=='move' ||
-                     $properties[$i]['TITLE']=='tap_twice' ||
-                     $properties[$i]['TITLE']=='shake_air' ||
-                     $properties[$i]['TITLE']=='swing' ||
-                     $properties[$i]['TITLE']=='alert' ||
-                     $properties[$i]['TITLE']=='free_fall' ||
-                     $properties[$i]['TITLE']=='rotate'
-                     ) {
-               $properties[$i]['SDEVICE_TYPE']='button';
-           } elseif ($properties[$i]['TITLE']=='status' || $properties[$i]['TITLE']=='channel_0' || $properties[$i]['TITLE']=='channel_1') {
-               $properties[$i]['SDEVICE_TYPE']='openclose';
-           } elseif ($properties[$i]['TITLE']=='temperature') {
-               $properties[$i]['SDEVICE_TYPE']='sensor_temp';
-           } elseif ($properties[$i]['TITLE']=='humidity') {
-               $properties[$i]['SDEVICE_TYPE']='sensor_humidity';
-           } elseif ($properties[$i]['TITLE']=='rgb') {
-               $properties[$i]['SDEVICE_TYPE']='rgb';
-           }
-       }
+	if (file_exists(DIR_MODULES.'devices/devices.class.php')) {
+		if ($properties[$i]['TITLE']=='motion') {
+               $properties[$i]['SDEVICE_TYPE'] = 'motion';
+		} elseif ($properties[$i]['TITLE']=='click' || 
+				$properties[$i]['TITLE']=='click0' || 
+				$properties[$i]['TITLE']=='click1' || 
+				$properties[$i]['TITLE']=='both_click' || 
+				$properties[$i]['TITLE']=='double_click' || 
+				$properties[$i]['TITLE']=='long_click_press'  || 
+				$properties[$i]['TITLE']=='long_click_release' ||
+				$properties[$i]['TITLE']=='flip90' ||
+				$properties[$i]['TITLE']=='flip180' ||
+				$properties[$i]['TITLE']=='move' ||
+				$properties[$i]['TITLE']=='tap_twice' ||
+				$properties[$i]['TITLE']=='shake_air' ||
+				$properties[$i]['TITLE']=='swing' ||
+				$properties[$i]['TITLE']=='alert' ||
+				$properties[$i]['TITLE']=='free_fall' ||
+				$properties[$i]['TITLE']=='rotate') {
+				$properties[$i]['SDEVICE_TYPE'] = 'button';
+		} elseif ($properties[$i]['TITLE']=='status' && $rec['TYPE']=='plug') {
+			$properties[$i]['SDEVICE_TYPE']='relay';
+		} elseif ($properties[$i]['TITLE']=='alarm' && $rec['TYPE']=='smoke') {
+			$properties[$i]['SDEVICE_TYPE']='smoke';
+		} elseif ($properties[$i]['TITLE']=='status') {
+			$properties[$i]['SDEVICE_TYPE']='openclose';
+		} elseif ($properties[$i]['TITLE']=='channel_0' || $properties[$i]['TITLE']=='channel_1') {
+			$properties[$i]['SDEVICE_TYPE']='relay';
+		} elseif ($properties[$i]['TITLE']=='temperature') {
+			$properties[$i]['SDEVICE_TYPE']='sensor_temp';
+		} elseif ($properties[$i]['TITLE']=='humidity') {
+			$properties[$i]['SDEVICE_TYPE']='sensor_humidity';
+		} elseif ($properties[$i]['TITLE']=='voltage') {
+			$properties[$i]['SDEVICE_TYPE']='sensor_voltage';
+		} elseif ($properties[$i]['TITLE']=='rgb') {
+			$properties[$i]['SDEVICE_TYPE']='rgb';
+		} elseif ($properties[$i]['TITLE']=='load_power' || $properties[$i]['TITLE']=='power_consumed') {
+			$properties[$i]['SDEVICE_TYPE']='sensor_power';
+		} elseif ($properties[$i]['TITLE']=='ringtone' ||
+			$properties[$i]['TITLE']=='no_motion' ||
+			$properties[$i]['TITLE']=='no_close' ||
+			$properties[$i]['TITLE']=='density' ||
+			$properties[$i]['TITLE']=='iam') {
+			$properties[$i]['SDEVICE_TYPE']='sensor_state';
+		} elseif ($properties[$i]['TITLE']=='brightness') {
+			$properties[$i]['SDEVICE_TYPE']='dimmer';
+		} elseif ($properties[$i]['TITLE']=='illumination' || $properties[$i]['TITLE']=='lux') {
+			$properties[$i]['SDEVICE_TYPE']='sensor_light';
+		} elseif ($properties[$i]['TITLE']=='pressure_kpa' || $properties[$i]['TITLE']=='pressure_mm') {
+			$properties[$i]['SDEVICE_TYPE']='sensor_pressure';
+		} elseif ($properties[$i]['TITLE']=='leak') {
+			$properties[$i]['SDEVICE_TYPE']='leak';
+		}
+	}
 
    }
    $out['PROPERTIES']=$properties;   
