@@ -7,6 +7,18 @@
   }
   $table_name='xidevices';
   $rec=SQLSelectOne("SELECT * FROM $table_name WHERE ID='$id'");
+  if ($rec['ID']) {
+    $battery=SQLSelectOne("SELECT * FROM xicommands WHERE DEVICE_ID='".$rec['ID']."' AND TITLE='battery_level'");
+    if ($battery['ID'])
+    {
+        $out['POWER'] = $battery['VALUE'];
+        $out['POWER_WARNING'] = "success";
+        if ($out['POWER']<= 40)
+           $out['POWER_WARNING'] = "warning";
+        if ($out['POWER']<= 20)
+           $out['POWER_WARNING'] = "danger";
+    }
+  }
   if ($this->mode=='update') {
    $ok=1;
   // step: default
