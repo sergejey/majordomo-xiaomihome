@@ -44,6 +44,9 @@
   <b>
    [#TITLE#]
   </a></b>
+  [#if POWER!=""#]
+    <span class="label label-[#POWER_WARNING#]"><i class="glyphicon glyphicon-flash"></i> [#POWER#]%</span>
+  [#endif#]
   [#if COMMANDS!=""#]<div>[#COMMANDS#]</div>[#endif#]
  </td>
  <td style="vertical-align:middle">[#TYPE#]</td>

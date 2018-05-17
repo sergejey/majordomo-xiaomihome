@@ -41,6 +41,15 @@ if ($res[0]['ID']) {
                     }
                     $res[$i]['COMMANDS'] .= ')';
                 }
+                if ($commands[$ic]['TITLE'] == 'battery_level')
+                {
+                    $res[$i]['POWER'] = $commands[$ic]['VALUE'];
+                    $res[$i]['POWER_WARNING'] = "success";
+                    if ($res[$i]['POWER']<= 40)
+                        $res[$i]['POWER_WARNING'] = "warning";
+                    if ($res[$i]['POWER']<= 20)
+                        $res[$i]['POWER_WARNING'] = "danger";
+                }
                 $res[$i]['COMMANDS'] .= ";</nobr> ";
             }
         }

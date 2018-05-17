@@ -366,7 +366,17 @@ class xiaomihome extends module
                 }
                 if (isset($message_data['data']['voltage'])) {
                     $command = 'voltage';
-                    $value = $message_data['data']['voltage'];
+                    $value = $message_data['data']['voltage'] * 0.001;
+                    $got_commands[] = array('command' => $command, 'value' => $value);
+                    $mvolts = $message_data['data']['voltage'];
+                    if ($mvolts  >=    3000) $battery_level = 100;
+                    else if ($mvolts > 2900) $battery_level = 100 - ((3000 - $mvolts) * 58) / 100;
+                    else if ($mvolts > 2740) $battery_level = 42 - ((2900 - $mvolts) * 24) / 160;
+                    else if ($mvolts > 2440) $battery_level = 18 - ((2740 - $mvolts) * 12) / 300;
+                    else if ($mvolts > 2100) $battery_level = 6 - ((2440 - $mvolts) * 6) / 340;
+                    else $battery_level = 0;
+                    $command = 'battery_level';
+                    $value = $battery_level;
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
                 if ($message_data['cmd'] == 'report' && isset($message_data['data']['status']) && ($message_data['model'] == 'magnet' || $message_data['model'] == 'sensor_magnet.aq2')) {
