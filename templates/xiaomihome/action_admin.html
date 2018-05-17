@@ -36,6 +36,12 @@
                      <input type="text" name="api_bind" value="<#API_BIND#>" class="form-control">
                  </div>
              </div>
+             <div class="form-group">
+                 <label class="control-label col-lg-6">Debug:</label>
+                 <div class="col-lg-4">
+                    <input type="checkbox" name="debug" value="1"[#if DEBUG="1"#] checked[#endif#]>
+                 </div>
+             </div>
              <div class="form-actions">
                  <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_UPDATE#></button>
                  <input type="hidden" name="view_mode" value="update_settings">
