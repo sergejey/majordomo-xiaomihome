@@ -133,9 +133,12 @@ class xiaomihome extends module
 
     function processMessage($message, $ip)
     {
-
-        //DebMes($message, 'xiaomi');
-
+        $this->getConfig();
+        if ($this->config['DEBUG'])
+        {
+            DebMes("Received message ($message) from $ip",'xiaomi');
+        }
+            
         //echo date('Y-m-d H:i:s') . "\n";
         //echo "IP: " . $ip . "\n";
         //echo "MSG: " . $message . "\n";
@@ -431,6 +434,10 @@ class xiaomihome extends module
 
     function sendMessage($message, $ip, $sock)
     {
+        if ($this->config['DEBUG'])
+        {
+            DebMes("Sending message ($message) to $ip",'xiaomi');
+        }
         socket_sendto($sock, $message, strlen($message), 0, $ip, XIAOMI_MULTICAST_PORT);
     }
 
@@ -438,20 +445,23 @@ class xiaomihome extends module
     {
 
         $this->getConfig();
-
+		
 		if ((time() - gg('cycle_xiaomihomeRun')) < 15 ) {
 			$out['CYCLERUN'] = 1;
 		} else {
 			$out['CYCLERUN'] = 0;
 		}
-
+		
         $out['API_IP']=$this->config['API_IP'];
         $out['API_BIND']=$this->config['API_BIND'];
+        $out['DEBUG']=$this->config['DEBUG'];
         if ($this->view_mode=='update_settings') {
             global $api_ip;
             $this->config['API_IP']=trim($api_ip);
             global $api_bind;
             $this->config['API_BIND']=trim($api_bind);
+            global $debug;
+            $this->config['DEBUG']=$debug;
             $this->saveConfig();
             setGlobal('cycle_xiaomihomeControl', 'restart');
             $this->redirect("?");
@@ -626,7 +636,7 @@ class xiaomihome extends module
                         $key = $gate['GATE_KEY'];
                         $token = $gate['TOKEN'];
                     } else {
-                        DebMes('Cannot find gateway key');
+                        DebMes('Cannot find gateway key', 'xiaomi');
                     }
                 } else {
                     $token = $command['TOKEN'];

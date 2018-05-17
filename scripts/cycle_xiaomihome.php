@@ -71,7 +71,7 @@ while (1) {
         $total = count($queue);
         for ($i = 0; $i < $total; $i++) {
             $data = $queue[$i]['DATA'];
-            echo date('H:i:s') . " Sending " . $data . "\n";
+            //echo date('H:i:s') . " Sending " . $data . "\n";
             if ($gw_ip != "") {
                 $ip = $gw_ip;
             } else {
