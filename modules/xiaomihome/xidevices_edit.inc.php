@@ -2,23 +2,43 @@
 /*
 * @version 0.1 (wizard)
 */
-  if ($this->owner->name=='panel') {
-   $out['CONTROLPANEL']=1;
-  }
-  $table_name='xidevices';
-  $rec=SQLSelectOne("SELECT * FROM $table_name WHERE ID='$id'");
-  if ($rec['ID']) {
-    $battery=SQLSelectOne("SELECT * FROM xicommands WHERE DEVICE_ID='".$rec['ID']."' AND TITLE='battery_level'");
-    if ($battery['ID'])
-    {
-        $out['POWER'] = $battery['VALUE'];
-        $out['POWER_WARNING'] = "success";
-        if ($out['POWER']<= 40)
-           $out['POWER_WARNING'] = "warning";
-        if ($out['POWER']<= 20)
-           $out['POWER_WARNING'] = "danger";
-    }
-  }
+	if ($this->owner->name=='panel') {
+		$out['CONTROLPANEL'] = 1;
+	}
+	
+	$table_name = 'xidevices';
+	
+	$rec = SQLSelectOne("SELECT * FROM $table_name WHERE ID='$id'");
+	
+	if ($rec['ID']) {
+		$battery = SQLSelectOne("SELECT * FROM xicommands WHERE DEVICE_ID='" . $rec['ID'] . "' AND TITLE='battery_level'");
+		if ($battery['ID']) {
+			$out['POWER'] = $battery['VALUE'];
+			$out['POWER_WARNING'] = 'success';
+			if ($out['POWER'] <= 40)
+				$out['POWER_WARNING'] = 'warning';
+			if ($out['POWER'] <= 20)
+				$out['POWER_WARNING'] = 'danger';
+			
+			if ($rec['TYPE']=='switch' || 
+				$rec['TYPE']=='sensor_ht' || 
+				$rec['TYPE']=='sensor_switch.aq2' || 
+				$rec['TYPE']=='sensor_switch.aq3' || 
+				$rec['TYPE']=='86sw1' || 
+				$rec['TYPE']=='86sw2' || 
+				$rec['TYPE']=='weather.v1' || 
+				$rec['TYPE']=='sensor_wleak.aq1') {
+					$out['BATTERY_TYPE'] = 'CR2032';
+			} elseif ($rec['TYPE']=='motion' || $rec['TYPE']=='sensor_motion.aq2' || $rec['TYPE']=='cube') {
+				$out['BATTERY_TYPE'] = 'CR2450';
+			} elseif ($rec['TYPE']=='magnet' || $rec['TYPE']=='sensor_magnet.aq2') {
+				$out['BATTERY_TYPE'] = 'CR1632';
+			} elseif ($rec['TYPE']=='smoke') {
+				$out['BATTERY_TYPE'] = 'CR123A';
+			}
+		}
+	}
+	
   if ($this->mode=='update') {
    $ok=1;
   // step: default
@@ -158,7 +178,7 @@
 				$properties[$i]['TITLE']=='free_fall' ||
 				$properties[$i]['TITLE']=='rotate') {
 				$properties[$i]['SDEVICE_TYPE'] = 'button';
-		} elseif ($properties[$i]['TITLE']=='status' && $rec['TYPE']=='plug') {
+		} elseif ($properties[$i]['TITLE']=='status' && ($rec['TYPE']=='plug' || $rec['TYPE']=='ctrl_86plug.aq1')) {
 			$properties[$i]['SDEVICE_TYPE']='relay';
 		} elseif ($properties[$i]['TITLE']=='alarm' && $rec['TYPE']=='smoke') {
 			$properties[$i]['SDEVICE_TYPE']='smoke';
@@ -174,7 +194,7 @@
 			$properties[$i]['SDEVICE_TYPE']='sensor_voltage';
 		} elseif ($properties[$i]['TITLE']=='rgb') {
 			$properties[$i]['SDEVICE_TYPE']='rgb';
-		} elseif ($properties[$i]['TITLE']=='load_power' || $properties[$i]['TITLE']=='power_consumed') {
+		} elseif ($properties[$i]['TITLE']=='load_power' || $properties[$i]['TITLE']=='power_consumed' || $properties[$i]['TITLE']=='energy_consumed') {
 			$properties[$i]['SDEVICE_TYPE']='sensor_power';
 		} elseif ($properties[$i]['TITLE']=='ringtone' ||
 			$properties[$i]['TITLE']=='no_motion' ||
