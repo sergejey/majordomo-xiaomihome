@@ -6,13 +6,14 @@
  * @copyright http://majordomo.smartliving.ru/ (c)
  * @version 0.1 (wizard, 17:01:07 [Jan 28, 2017])
  */
-//
+
 // https://github.com/louisZL/lumi-gateway-local-api
 // https://github.com/illxi/lumi-gateway-local-api (english)
 // https://github.com/lazcad/homeassistant/blob/master/components/xiaomi.py
 // https://github.com/illxi/lumi-gateway-local-api/blob/master/device_read_write.md
 // https://github.com/Danielhiversen/homeassistant/pull/6 -- ringtone support
 // https://github.com/aqara/opencloud-docs/blob/master/en/development/gateway-LAN-communication.md
+// http://docs.opencloud.aqara.cn/development/en-gateway-LAN-communication/
 
 Define('XIAOMI_MULTICAST_PORT', 9898);
 Define('XIAOMI_MULTICAST_ADDRESS', '224.0.0.50');
@@ -324,6 +325,11 @@ class xiaomihome extends module
                 if (isset($message_data['data']['power_consumed'])) {
                     $value = $message_data['data']['power_consumed'];
                     $command = 'power_consumed';
+                    $got_commands[] = array('command' => $command, 'value' => $value);
+                }
+				if (isset($message_data['data']['energy_consumed'])) {
+                    $value = $message_data['data']['energy_consumed'];
+                    $command = 'energy_consumed';
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
 				if (isset($message_data['data']['curtain_level'])) {
@@ -646,7 +652,7 @@ class xiaomihome extends module
                         $key = $gate['GATE_KEY'];
                         $token = $gate['TOKEN'];
                     } else {
-                        DebMes('Cannot find gateway key', 'xiaomi');
+                        if ($this->config['DEBUG']) DebMes('Cannot find gateway key', 'xiaomi');
                     }
                 } else {
                     $token = $command['TOKEN'];
