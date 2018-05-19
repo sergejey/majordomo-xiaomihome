@@ -133,9 +133,12 @@ class xiaomihome extends module
 
     function processMessage($message, $ip)
     {
-
-        //DebMes($message, 'xiaomi');
-
+        $this->getConfig();
+        if ($this->config['DEBUG'])
+        {
+            DebMes("Received message ($message) from $ip",'xiaomi');
+        }
+            
         //echo date('Y-m-d H:i:s') . "\n";
         //echo "IP: " . $ip . "\n";
         //echo "MSG: " . $message . "\n";
@@ -242,7 +245,7 @@ class xiaomihome extends module
                     $value = round($value * 7.50062,2);
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
-                if ($message_data['cmd'] == 'report' && ($message_data['model'] == 'switch' || $message_data['model'] == 'sensor_switch.aq2')) {
+                if ($message_data['cmd'] == 'report' && ($message_data['model'] == 'switch' || $message_data['model'] == 'sensor_switch.aq2' || $message_data['model'] == 'sensor_switch.aq3')) {
                     $value = 1;
                     $command = $message_data['data']['status'];
                     $got_commands[] = array('command' => $command, 'value' => $value);
@@ -363,7 +366,17 @@ class xiaomihome extends module
                 }
                 if (isset($message_data['data']['voltage'])) {
                     $command = 'voltage';
-                    $value = $message_data['data']['voltage'];
+                    $value = $message_data['data']['voltage'] * 0.001;
+                    $got_commands[] = array('command' => $command, 'value' => $value);
+                    $mvolts = $message_data['data']['voltage'];
+                    if ($mvolts  >=    3000) $battery_level = 100;
+                    else if ($mvolts > 2900) $battery_level = 100 - ((3000 - $mvolts) * 58) / 100;
+                    else if ($mvolts > 2740) $battery_level = 42 - ((2900 - $mvolts) * 24) / 160;
+                    else if ($mvolts > 2440) $battery_level = 18 - ((2740 - $mvolts) * 12) / 300;
+                    else if ($mvolts > 2100) $battery_level = 6 - ((2440 - $mvolts) * 6) / 340;
+                    else $battery_level = 0;
+                    $command = 'battery_level';
+                    $value = $battery_level;
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
                 if ($message_data['cmd'] == 'report' && isset($message_data['data']['status']) && ($message_data['model'] == 'magnet' || $message_data['model'] == 'sensor_magnet.aq2')) {
@@ -412,6 +425,7 @@ class xiaomihome extends module
                             $command == 'alarm' ||
                             $command == 'iam' ||
                             $command == 'leak' ||
+                            $device['TYPE'] == 'sensor_switch.aq3' ||
                             $device['TYPE'] == 'sensor_switch.aq2' ||
                             $device['TYPE'] == 'switch' ||
                             $device['TYPE'] == 'cube' ||
@@ -430,6 +444,10 @@ class xiaomihome extends module
 
     function sendMessage($message, $ip, $sock)
     {
+        if ($this->config['DEBUG'])
+        {
+            DebMes("Sending message ($message) to $ip",'xiaomi');
+        }
         socket_sendto($sock, $message, strlen($message), 0, $ip, XIAOMI_MULTICAST_PORT);
     }
 
@@ -446,11 +464,14 @@ class xiaomihome extends module
 		
         $out['API_IP']=$this->config['API_IP'];
         $out['API_BIND']=$this->config['API_BIND'];
+        $out['DEBUG']=$this->config['DEBUG'];
         if ($this->view_mode=='update_settings') {
             global $api_ip;
             $this->config['API_IP']=trim($api_ip);
             global $api_bind;
             $this->config['API_BIND']=trim($api_bind);
+            global $debug;
+            $this->config['DEBUG']=$debug;
             $this->saveConfig();
             setGlobal('cycle_xiaomihomeControl', 'restart');
             $this->redirect("?");
@@ -625,7 +646,7 @@ class xiaomihome extends module
                         $key = $gate['GATE_KEY'];
                         $token = $gate['TOKEN'];
                     } else {
-                        DebMes('Cannot find gateway key');
+                        DebMes('Cannot find gateway key', 'xiaomi');
                     }
                 } else {
                     $token = $command['TOKEN'];
@@ -637,7 +658,7 @@ class xiaomihome extends module
                 $data['short_id'] = 0;
                 $cmd_data = array();
 
-                if ($command['TITLE'] == 'status' && ($command['TYPE'] == 'plug' || $command['TYPE'] == 'ctrl_86plug.aq1')) {                  
+                if ($command['TITLE'] == 'status' && ($command['TYPE'] == 'plug' || $command['TYPE'] == 'ctrl_86plug.aq1')) {
 					$data['cmd'] = 'write';
                     $data['model'] = $command['TYPE'];
                     if ($value) {
@@ -794,14 +815,14 @@ class xiaomihome extends module
         $data = <<<EOD
  xidevices: ID int(10) unsigned NOT NULL auto_increment
  xidevices: TITLE varchar(100) NOT NULL DEFAULT ''
- xidevices: TYPE varchar(100) NOT NULL DEFAULT '' 
+ xidevices: TYPE varchar(100) NOT NULL DEFAULT ''
  xidevices: SID varchar(255) NOT NULL DEFAULT ''
  xidevices: GATE_KEY varchar(255) NOT NULL DEFAULT ''
- xidevices: GATE_IP varchar(255) NOT NULL DEFAULT '' 
- xidevices: TOKEN varchar(255) NOT NULL DEFAULT ''  
- xidevices: PARENT_ID int(10) unsigned NOT NULL DEFAULT '0' 
+ xidevices: GATE_IP varchar(255) NOT NULL DEFAULT ''
+ xidevices: TOKEN varchar(255) NOT NULL DEFAULT ''
+ xidevices: PARENT_ID int(10) unsigned NOT NULL DEFAULT '0'
  xidevices: UPDATED datetime
- 
+
  xicommands: ID int(10) unsigned NOT NULL auto_increment
  xicommands: TITLE varchar(100) NOT NULL DEFAULT ''
  xicommands: VALUE varchar(255) NOT NULL DEFAULT ''
@@ -810,12 +831,12 @@ class xiaomihome extends module
  xicommands: LINKED_PROPERTY varchar(100) NOT NULL DEFAULT ''
  xicommands: LINKED_METHOD varchar(100) NOT NULL DEFAULT ''
  xicommands: UPDATED datetime
- 
+
  xiqueue: ID int(10) unsigned NOT NULL auto_increment
- xiqueue: IP varchar(100) NOT NULL DEFAULT '' 
- xiqueue: DATA text 
- xiqueue: ADDED datetime 
- 
+ xiqueue: IP varchar(100) NOT NULL DEFAULT ''
+ xiqueue: DATA text
+ xiqueue: ADDED datetime
+
 EOD;
         parent::dbInstall($data);
     }

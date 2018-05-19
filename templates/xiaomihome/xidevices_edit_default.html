@@ -33,7 +33,7 @@
   <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
    <#LANG_TYPE#>:
   </label>
-  <div class="col-lg-8">[#TYPE#]</div>
+  <div class="col-lg-8"><img src="../templates/xiaomihome/img/[#TYPE#].png" height="40px" onerror="this.src='../templates/xiaomihome/img/unknown.png'"> [#TYPE#]</div>
  </div>
 
 
@@ -62,6 +62,16 @@
 [#UPDATED#]
  </div>
 </div>
+[#if POWER!=""#]
+ <div class="form-group">
+  <label class="col-lg-3 control-label">Battery:
+  </label>
+  <div class="col-lg-8">
+    <span class="label label-[#POWER_WARNING#]"><i class="glyphicon glyphicon-flash"></i> [#POWER#]%</span>
+  </div>
+ </div>
+[#endif POWER#]
+
 <div class="form-group">
         <div class="col-lg-offset-3 col-lg-8">
  [#if ID!=""#]
