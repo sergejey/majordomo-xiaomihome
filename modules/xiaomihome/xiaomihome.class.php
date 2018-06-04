@@ -293,7 +293,7 @@ class xiaomihome extends module
                     $value = $message_data['data']['density'];
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
-                if ($message_data['cmd'] == 'report' && isset($message_data['data']['status']) && $message_data['model'] == 'cube') {
+                if ($message_data['cmd'] == 'report' && isset($message_data['data']['status']) && ($message_data['model'] == 'cube' || $message_data['model'] == 'sensor_cube.aqgl01')) {
                     $value = 1;
                     $command = $message_data['data']['status'];
                     $got_commands[] = array('command' => $command, 'value' => $value);
@@ -394,7 +394,13 @@ class xiaomihome extends module
                     $command = 'status';
                     $got_commands[] = array('command' => $command, 'value' => $value);
                 }
-
+				
+				if ($message_data['cmd'] == 'report' && $message_data['model'] == 'lock.aq1') {
+					foreach($message_data['data'] as $command => $value) {
+						$got_commands[] = array('command' => $command, 'value' => $value);
+					}
+				}
+				
                 /*
                 if (!isset($value)) {
                     $value=json_encode($message_data['data']);
@@ -435,6 +441,7 @@ class xiaomihome extends module
                             $device['TYPE'] == 'sensor_switch.aq2' ||
                             $device['TYPE'] == 'switch' ||
                             $device['TYPE'] == 'cube' ||
+							$device['TYPE'] == 'sensor_cube.aqgl01' ||
                             0
                         )
                     ) {
