@@ -29,12 +29,14 @@
 				$rec['TYPE']=='weather.v1' || 
 				$rec['TYPE']=='sensor_wleak.aq1') {
 					$out['BATTERY_TYPE'] = 'CR2032';
-			} elseif ($rec['TYPE']=='motion' || $rec['TYPE']=='sensor_motion.aq2' || $rec['TYPE']=='cube') {
+			} elseif ($rec['TYPE']=='motion' || $rec['TYPE']=='sensor_motion.aq2' || $rec['TYPE']=='cube' || $rec['TYPE']=='sensor_cube.aqgl01') {
 				$out['BATTERY_TYPE'] = 'CR2450';
 			} elseif ($rec['TYPE']=='magnet' || $rec['TYPE']=='sensor_magnet.aq2') {
 				$out['BATTERY_TYPE'] = 'CR1632';
 			} elseif ($rec['TYPE']=='smoke') {
 				$out['BATTERY_TYPE'] = 'CR123A';
+			} elseif ($rec['TYPE']=='lock.aq1') {
+				$out['BATTERY_TYPE'] = '8 AA';
 			}
 		}
 	}
@@ -210,6 +212,8 @@
 			$properties[$i]['SDEVICE_TYPE']='sensor_pressure';
 		} elseif ($properties[$i]['TITLE']=='leak') {
 			$properties[$i]['SDEVICE_TYPE']='leak';
+		} elseif ($properties[$i]['TITLE']=='battery_level') {
+			$properties[$i]['SDEVICE_TYPE']='sensor_percentage';
 		}
 	}
 
