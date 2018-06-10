@@ -722,7 +722,7 @@ class xiaomihome extends module
                     $sendvalue = hexdec($value);
                     $data['cmd'] = 'write';
                     $data['model'] = 'gateway';
-                    $cmd_data['rgb'] = $sendvalue;
+                    $cmd_data['brightness'] = $sendvalue;
                 }
 
                 if ($command['TITLE'] == 'rgb') {
