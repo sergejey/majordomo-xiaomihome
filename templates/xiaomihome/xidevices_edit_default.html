@@ -1,94 +1,90 @@
 
 <!-- Table 'xidevices' edit -->
 <form action="?" method="post" enctype="multipart/form-data" name="frmEdit" class="form-horizontal">
-[#if OK#]
-<div class="alert alert-success"><#LANG_DATA_SAVED#></div>
-[#endif OK#]
-[#if ERR#]
-<div class="alert alert-error"><#LANG_FILLOUT_REQURED#></div>
-[#endif ERR#]
-<fieldset>
-[#if ID=""#]
-<legend><#LANG_NEW_RECORD#></legend>
-[#endif ID#]
-<!-- TITLE (varchar) -->
-<div class="form-group">
- <label class="col-lg-3 control-label"[#if ERR_TITLE#] style="color:red;font-weight:bold"[#endif#]>
- <#LANG_TITLE#>:
- (*)
- </label>
- <div class="col-lg-8"><input type="text" class="form-control" name="title" value="[#TITLE#]" id="title"></div>
-</div>
+   [#if OK#]
+      <div class="alert alert-success"><#LANG_DATA_SAVED#></div>
+   [#endif OK#]
+   [#if ERR#]
+      <div class="alert alert-error"><#LANG_FILLOUT_REQURED#></div>
+   [#endif ERR#]
+   <fieldset>
+   [#if ID=""#]
+      <legend><#LANG_NEW_RECORD#></legend>
+   [#endif ID#]
 
- [#if TYPE="gateway"#]
- <div class="form-group">
-  <label class="col-lg-3 control-label"[#if ERR_GATE_KEY#] style="color:red;font-weight:bold"[#endif#]>
-   Key:
-  </label>
-  <div class="col-lg-8"><input type="text" class="form-control" name="gate_key" value="[#GATE_KEY#]" id="title"></div>
- </div>
- [#endif TYPE#]
+   <div class="form-group">
+      <label class="col-lg-3 control-label"[#if ERR_TITLE#] style="color:red;font-weight:bold"[#endif#]>
+         <#LANG_TITLE#>: (*)
+      </label>
+      <div class="col-lg-8"><input type="text" class="form-control" name="title" value="[#TITLE#]" id="title"></div>
+   </div>
 
- <div class="form-group">
-  <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
-   <#LANG_TYPE#>:
-  </label>
-  <div class="col-lg-8"><img src="../templates/xiaomihome/img/[#TYPE#].png" height="40px" onerror="this.src='../templates/xiaomihome/img/unknown.png'"> [#TYPE#]</div>
- </div>
+   [#if TYPE="gateway" || TYPE="acpartner.v3"#]
+      <div class="form-group">
+         <label class="col-lg-3 control-label"[#if ERR_GATE_KEY#] style="color:red;font-weight:bold"[#endif#]>
+            Key:
+         </label>
+         <div class="col-lg-8"><input type="text" class="form-control" name="gate_key" value="[#GATE_KEY#]" id="title"></div>
+      </div>
+   [#endif TYPE#]
 
+   <div class="form-group">
+      <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
+         <#LANG_TYPE#>:
+      </label>
+      <div class="col-lg-8"><img src="../templates/xiaomihome/img/[#TYPE#].png" height="40px" onerror="this.src='../templates/xiaomihome/img/unknown.png'"> [#TYPE#]</div>
+   </div>
 
+   <div class="form-group">
+      <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
+         SID:
+      </label>
+      <div class="col-lg-8">[#SID#]</div>
+   </div>
 
-<!-- SID (varchar) -->
-<div class="form-group">
- <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
- SID:
- </label>
- <div class="col-lg-8">[#SID#]</div>
-</div>
+   <div class="form-group">
+      <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
+         Gate IP:
+      </label>
+      <div class="col-lg-8">[#GATE_IP#]</div>
+   </div>
 
- <div class="form-group">
-  <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
-   Gate IP:
-  </label>
-  <div class="col-lg-8">[#GATE_IP#]</div>
- </div>
+   <div class="form-group">
+      <label class="col-lg-3 control-label"[#if ERR_UPDATED#] style="color:red;font-weight:bold"[#endif#]>
+         <#LANG_UPDATED#>:
+      </label>
+      <div class="col-lg-8">
+         [#UPDATED#]
+      </div>
+   </div>
 
-<!-- UPDATED (datetime) -->
-<div class="form-group">
- <label class="col-lg-3 control-label"[#if ERR_UPDATED#] style="color:red;font-weight:bold"[#endif#]>
- <#LANG_UPDATED#>:
- </label>
- <div class="col-lg-8">
-[#UPDATED#]
- </div>
-</div>
-[#if POWER!=""#]
-<div class="form-group">
-	<label class="col-lg-3 control-label">Battery:</label>
-	<div class="col-lg-8">
-		<span class="label label-[#POWER_WARNING#]"><i class="glyphicon glyphicon-flash"></i> [#POWER#]%</span>
-		[#if BATTERY_TYPE!=""#]
-			<span class="label label-info">[#BATTERY_TYPE#]</span>
-		[#endif BATTERY_TYPE#]
-	</div>
-</div>
-[#endif POWER#]
+   [#if POWER!=""#]
+      <div class="form-group">
+         <label class="col-lg-3 control-label">Battery:</label>
+         <div class="col-lg-8">
+            <span class="label label-[#POWER_WARNING#]"><i class="glyphicon glyphicon-flash"></i> [#POWER#]%</span>
+            [#if BATTERY_TYPE!=""#]
+               <span class="label label-info">[#BATTERY_TYPE#]</span>
+            [#endif BATTERY_TYPE#]
+         </div>
+      </div>
+   [#endif POWER#]
 
-<div class="form-group">
-        <div class="col-lg-offset-3 col-lg-8">
- [#if ID!=""#]
- <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_SUBMIT#></button>
- [#else ID#]
- <button type="submit" name="subm" value="Add" class="btn btn-primary"><#LANG_ADD#></button>
- [#endif ID#]
- <a href="?data_source=<#DATA_SOURCE#>" class="btn btn-default "><#LANG_CANCEL#></a>
-<input type="hidden" name="id" value="<#ID#>">
-<input type="hidden" name="view_mode" value="<#VIEW_MODE#>">
-<input type="hidden" name="edit_mode" value="<#EDIT_MODE#>">
-<input type="hidden" name="mode" value="update">
-<input type="hidden" name="data_source" value="<#DATA_SOURCE#>">
-<input type="hidden" name="tab" value="<#TAB#>">
-        </div>
-</div>
-</fieldset>
+   <div class="form-group">
+      <div class="col-lg-offset-3 col-lg-8">
+         [#if ID!=""#]
+            <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_SUBMIT#></button>
+         [#else ID#]
+            <button type="submit" name="subm" value="Add" class="btn btn-primary"><#LANG_ADD#></button>
+         [#endif ID#]
+         <a href="?data_source=<#DATA_SOURCE#>" class="btn btn-default "><#LANG_CANCEL#></a>
+         <input type="hidden" name="id" value="<#ID#>">
+         <input type="hidden" name="view_mode" value="<#VIEW_MODE#>">
+         <input type="hidden" name="edit_mode" value="<#EDIT_MODE#>">
+         <input type="hidden" name="mode" value="update">
+         <input type="hidden" name="data_source" value="<#DATA_SOURCE#>">
+         <input type="hidden" name="tab" value="<#TAB#>">
+      </div>
+   </div>
+   </fieldset>
 </form>
