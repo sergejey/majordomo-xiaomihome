@@ -1,105 +1,153 @@
+<!-- action usual -->
+[#if DATA_SOURCE="xidevices" || DATA_SOURCE=""#]
 
- <!-- action usual -->
- [#if DATA_SOURCE="xidevices" || DATA_SOURCE=""#]
- <!-- table xidevices search -->
- [#if VIEW_MODE="search_xidevices" || VIEW_MODE=""#]
+<!-- table xidevices search -->
+[#if VIEW_MODE="search_xidevices" || VIEW_MODE=""#]
+   <div>
+      <img src="../templates/xiaomihome/img/xiaomihome.png"  width="30" height="30">
+      &nbsp;&nbsp;&nbsp;
+      <a class="btn btn-default" href="#api_settings" data-toggle="collapse"><i class="glyphicon glyphicon-cog"></i> <#LANG_SETUP#></a>
+      &nbsp;&nbsp;&nbsp;
+      [#if CYCLERUN==1#]
+         <span class="label label-success" title="Статус цикла">Цикл запущен</span>
+      [#else#]
+         <span class="label label-danger" title="Статус цикла">Цикл остановлен</span>
+      [#endif#]
+      <div class="float-right">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <button class="btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#about">О модуле&nbsp;&nbsp;<span class="glyphicon glyphicon-info-sign icon-white"></span></button>
+   </div>
 
- <div>
-	<img src="../templates/xiaomihome/img/xiaomihome.png"  width="30" height="30">
-	&nbsp;&nbsp;&nbsp;
-    <a class="btn btn-default" href="#api_settings" data-toggle="collapse"><i class="glyphicon glyphicon-cog"></i> <#LANG_SETUP#></a>
-	&nbsp;&nbsp;&nbsp;
-	[#if CYCLERUN==1#]
-		<span class="label label-success" title="Статус цикла">Цикл запущен</span>
-	[#else#]
-		<span class="label label-danger" title="Статус цикла">Цикл остановлен</span>
-	[#endif#]
- </div>
- <div class="collapse" id='api_settings'>
-     &nbsp;
-     <form action="?" method="post" enctype="multipart/form-data" name="frmEdit" class="form-horizontal">
+   <div class="collapse" id='api_settings'>
+      &nbsp;
+      <form action="?" method="post" enctype="multipart/form-data" name="frmEdit" class="form-horizontal">
          <fieldset>
-
-             <div class="form-group">
-                 <label class="control-label col-lg-6"[#if ERR_API_IP#] style="color:red;font-weight:bold"[#endif#]>
-                     Gateway IP (<#LANG_OPTIONAL#>):
-                 </label>
-                 <div class="col-lg-4">
-                     <input type="text" name="api_ip" value="<#API_IP#>" class="form-control">
-                     </div>
-             </div>
-             <div class="form-group">
-                 <label class="control-label col-lg-6"[#if ERR_API_BIND#] style="color:red;font-weight:bold"[#endif#]>
-                     Server interface IP (<#LANG_OPTIONAL#>):
-                 </label>
-                 <div class="col-lg-4">
-                     <input type="text" name="api_bind" value="<#API_BIND#>" class="form-control">
-                 </div>
-             </div>
-             <div class="form-group">
-                 <label class="control-label col-lg-6">Debug:</label>
-                 <div class="col-lg-4">
-                    <input type="checkbox" name="debug" value="1"[#if DEBUG="1"#] checked[#endif#]>
-                 </div>
-             </div>
-             <div class="form-actions">
-                 <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_UPDATE#></button>
-                 <input type="hidden" name="view_mode" value="update_settings">
-                 <input type="hidden" name="mode" value="update">
-             </div>
+            <div class="form-group">
+               <label class="control-label col-lg-6"[#if ERR_API_BIND#] style="color:red;font-weight:bold"[#endif#]>
+                  Bind IP
+                  <span class='support-hover' tabindex="1" data-title="Если в модуль не поступают данные от шлюза, то указать адрес 224.0.0.50 или локальный IP сервера из того же сегмента сети, что и шлюз. Для вступления изменений в силу требуется перезапустить цикл."><i class="glyphicon glyphicon-info-sign"></i></span>
+               </label>
+               <div class="col-lg-4">
+                  <input type="text" name="api_bind" value="<#API_BIND#>" class="form-control" placeholder="Не обязательно">
+               </div>
+            </div>
+            <div class="form-group">
+               <div class="controls"><input type="checkbox" name="api_log_debmes" value="1"[#if API_LOG_DEBMES="1"#] checked[#endif#]> 
+                  Отладка DebMes
+                  <span class='support-hover' tabindex="1" data-title="Запись обмена сообщениями между сервером и устройствами в отдельный лог-файл YYYY-mm-dd_xiaomihome.log. Для вступления изменений в силу требуется перезапустить цикл."><i class="glyphicon glyphicon-info-sign"></i></span>
+               </div>
+            </div>
+            <div class="form-group">
+               <div class="controls"><input type="checkbox" name="api_log_cycle" value="1"[#if API_LOG_CYCLE="1"#] checked[#endif#]> 
+                  Отладка Cycle
+                  <span class='support-hover' tabindex="1" data-title="Запись отладочных сообщений цикла в лог-файл log_YYYY-mm-dd-cycle_xiaomihome.php.txt. Для вступления изменений в силу требуется перезапустить цикл."><i class="glyphicon glyphicon-info-sign"></i></span>
+               </div>
+            </div>
+            <div class="form-group">
+               <div class="controls"><input type="checkbox" name="api_log_gw_heartbeat" value="1"[#if API_LOG_GW_HEARTBEAT="1"#] checked[#endif#]> 
+                  Включать в лог <b>heartbeat</b> от шлюзов
+                  <span class='support-hover' tabindex="1" data-title="Фиксировать в DebMes heartbeat-сообщения от шлюзов. Не следует включать на продолжительное время, т. к. значительно возрастает объем сообщений в логе!"><i class="glyphicon glyphicon-info-sign"></i></span>
+               </div>
+            </div>
+            <div class="form-actions">
+               <button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_UPDATE#></button>
+               <input type="hidden" name="view_mode" value="update_settings">
+               <input type="hidden" name="mode" value="update">
+            </div>
          </fieldset>
-     </form>
- </div>
- &nbsp;
+      </form>
+   </div>
+   &nbsp;
+   [#inc xidevices_search_admin.html#]
+[#endif VIEW_MODE#]
 
-  [#inc xidevices_search_admin.html#]
- [#endif VIEW_MODE#]
- <!-- / table xidevices search -->
- <!-- table xidevices edit -->
- [#if VIEW_MODE="edit_xidevices"#]
+<!-- / table xidevices search -->
+<!-- table xidevices edit -->
+[#if VIEW_MODE="edit_xidevices"#]
    [#if ID!=""#]
-   [#if TITLE!=""#]<h4>[#TITLE#]</h4>[#endif TITLE#]
-<ul class="nav nav-tabs">
-  <li[#if TAB=""#] class="active"[#endif#]>
-   <a href="?data_source=<#DATA_SOURCE#>&view_mode=<#VIEW_MODE#>&id=<#ID#>&tab="><#LANG_GENERAL#></a>
-  </li>
-  <li[#if TAB="data"#] class="active"[#endif#]>
-   <a href="?data_source=<#DATA_SOURCE#>&view_mode=<#VIEW_MODE#>&id=<#ID#>&tab=data">&#060#LANG_DATA#&#062</a>
-  </li>
-</ul>
-&nbsp;<br/>
+      [#if TITLE!=""#]<h4>[#TITLE#]</h4>[#endif TITLE#]
+      <ul class="nav nav-tabs">
+         <li [#if TAB=""#] class="active"[#endif#]>
+            <a href="?data_source=<#DATA_SOURCE#>&view_mode=<#VIEW_MODE#>&id=<#ID#>&tab="><#LANG_GENERAL#></a>
+         </li>
+         <li [#if TAB="data"#] class="active"[#endif#]>
+            <a href="?data_source=<#DATA_SOURCE#>&view_mode=<#VIEW_MODE#>&id=<#ID#>&tab=data"><#LANG_DATA#></a>
+         </li>
+      </ul>
+      &nbsp;
+      <br/>
    [#endif ID#]
+   
    [#if TAB=""#]
-    [#inc xidevices_edit_default.html#]
+      [#inc xidevices_edit_default.html#]
    [#endif TAB#]
+   
    [#if TAB="data"#]
-    [#inc xidevices_edit_data.html#]
+      [#inc xidevices_edit_data.html#]
    [#endif TAB#]
- [#endif VIEW_MODE#]
- <!-- / table xidevices edit -->
- <!-- table xidevices view --> 
- [#if VIEW_MODE="view_xidevices"#]
+[#endif VIEW_MODE#]
+
+<!-- / table xidevices edit -->
+<!-- table xidevices view --> 
+[#if VIEW_MODE="view_xidevices"#]
    [#if TAB=""#]
-    [#inc xidevices_view_default.html#]
+      [#inc xidevices_view_default.html#]
    [#endif TAB#]
- [#endif VIEW_MODE#]
- <!-- / table xidevices view -->
- [#endif DATA_SOURCE#]
- <!-- action usual -->
- [#if DATA_SOURCE="xicommands"#]
- <!-- table xicommands search -->
- [#if VIEW_MODE="search_xicommands" || VIEW_MODE=""#]
-  [#inc xicommands_search_admin.html#]
- [#endif VIEW_MODE#]
- <!-- / table xicommands search -->
- <!-- table xicommands edit -->
- [#if VIEW_MODE="edit_xicommands"#]
-   [#inc xicommands_edit.html#]
- [#endif VIEW_MODE#]
- <!-- / table xicommands edit -->
- <!-- table xicommands view --> 
- [#if VIEW_MODE="view_xicommands"#]
-   [#inc xicommands_view.html#]
- [#endif VIEW_MODE#]
- <!-- / table xicommands view -->
- [#endif DATA_SOURCE#]
+[#endif VIEW_MODE#]
+
+<!-- / table xidevices view -->
+[#endif DATA_SOURCE#]
+
+<!-- action usual -->
+[#if DATA_SOURCE="xicommands"#]
+   <!-- table xicommands search -->
+   [#if VIEW_MODE="search_xicommands" || VIEW_MODE=""#]
+      [#inc xicommands_search_admin.html#]
+   [#endif VIEW_MODE#]
+   <!-- / table xicommands search -->
+   <!-- table xicommands edit -->
+   [#if VIEW_MODE="edit_xicommands"#]
+      [#inc xicommands_edit.html#]
+   [#endif VIEW_MODE#]
+   <!-- / table xicommands edit -->
+   <!-- table xicommands view --> 
+   [#if VIEW_MODE="view_xicommands"#]
+      [#inc xicommands_view.html#]
+   [#endif VIEW_MODE#]
+   <!-- / table xicommands view -->
+[#endif DATA_SOURCE#]
+
+<!-- About -->
+<div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="about1" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Закрыть</span></button>
+            <h4 class="modal-title">Xiaomi Home</h4>
+         </div>
+         <div class="modal-body" style="padding-bottom: 1px;">
+            <div class="float-right">
+               <img src="../templates/xiaomihome/img/xiaomihome.png"  width="48" height="48">
+            </div>
+            <p class="float-left">
+               Модуль поддержки Zigbee устройств из экосистемы Xiaomi Mihome.<br><br>
+               Документация в <a href="https://kb.smartliving.ru/category/moduli-v-majordomo/xiaomihome_help/" target="_blank">Базе знаний</a>.<br>
+               Обсуждение модуля на <a href="http://majordomo.smartliving.ru/forum/viewtopic.php?f=5&t=3644" target="_blank">форуме</a>.<br>
+               Проект в <a href="https://github.com/sergejey/majordomo-xiaomihome" target="_blank">Github</a>.<br>
+               Проект в <a href="https://connect.smartliving.ru/tasks/21.html" target="_blank">Connect</a>.<br>
+            </p>
+            <hr size="1">
+            <p class="float-left">
+               Поддержать разработку и развитие модуля:
+               <ul>
+                  <li>Внутренний счет в <a href="https://connect.smartliving.ru/tasks/21.html" target="_blank">Connect</a></li>
+               </ul>
+            </p>
+            <h6>Благодарности: <b>skysilver</b>, <b>Eraser</b>.</h6>
+         </div>
+         <div class="modal-footer" style="margin-top: 1px;">
+            <div class="pull-left">Автор: <a href="https://telegram.me/SergeJey" target="_blank">SergeJey</a></div>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+         </div>
+      </div>
+   </div>
+</div>
