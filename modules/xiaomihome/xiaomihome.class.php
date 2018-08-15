@@ -962,6 +962,8 @@ class xiaomihome extends module
                   if ($tmp[1]) {
                      $mid = trim($tmp[0]);
                      $vol = trim($tmp[1]);
+                  } else {
+                     $mid = $value;
                   }
                   $cmd_data['mid'] = (int)$mid;
                   if ($vol != '') {

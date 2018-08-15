@@ -158,7 +158,7 @@ while (1) {
    if (file_exists('./reboot') || isset($_GET['onetime'])) {
       $db->Disconnect();
       socket_close($sock);
-      echo date('H:i:s') . ' Stopping by command REBOOT or ONETIME' . basename(__FILE__) . PHP_EOL;
+      echo date('H:i:s') . ' Stopping by command REBOOT or ONETIME ' . basename(__FILE__) . PHP_EOL;
       exit;
    }
 }
