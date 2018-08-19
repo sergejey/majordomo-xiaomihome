@@ -16,7 +16,7 @@
       <label class="col-lg-3 control-label"[#if ERR_TITLE#] style="color:red;font-weight:bold"[#endif#]>
          <#LANG_TITLE#>: (*)
       </label>
-      <div class="col-lg-8"><input type="text" class="form-control" name="title" value="[#TITLE#]" id="title"></div>
+      <div class="col-lg-4"><input type="text" class="form-control" name="title" value="[#TITLE#]" id="title"></div>
    </div>
 
    [#if TYPE="gateway" || TYPE="acpartner.v3"#]
@@ -24,7 +24,7 @@
          <label class="col-lg-3 control-label"[#if ERR_GATE_KEY#] style="color:red;font-weight:bold"[#endif#]>
             Key:
          </label>
-         <div class="col-lg-8"><input type="text" class="form-control" name="gate_key" value="[#GATE_KEY#]" id="title"></div>
+         <div class="col-lg-4"><input type="text" class="form-control" name="gate_key" value="[#GATE_KEY#]" id="title"></div>
       </div>
    [#endif TYPE#]
 
