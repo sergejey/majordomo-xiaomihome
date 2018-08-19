@@ -31,6 +31,19 @@
                </div>
             </div>
             <div class="form-group">
+               <label class="control-label col-lg-6">
+                  Точность округления
+                  <span class='support-hover' tabindex="1" data-title="Точность округления показаний датчиков (температура, влажность, давление)."><i class="glyphicon glyphicon-info-sign"></i></span>
+               </label>
+               <div class="col-lg-4">
+                  <select name="api_round" class="form-control">
+                     <option value="0" [#if API_ROUND="0"#] selected[#endif#]>Целые</option>
+                     <option value="1" [#if API_ROUND="1"#] selected[#endif#]>Десятые</option>
+                     <option value="2" [#if API_ROUND="2"#] selected[#endif#]>Сотые</option>
+                  </select>
+               </div>
+            </div>
+            <div class="form-group">
                <div class="controls"><input type="checkbox" name="api_log_debmes" value="1"[#if API_LOG_DEBMES="1"#] checked[#endif#]> 
                   Отладка DebMes
                   <span class='support-hover' tabindex="1" data-title="Запись обмена сообщениями между сервером и устройствами в отдельный лог-файл YYYY-mm-dd_xiaomihome.log. Для вступления изменений в силу требуется перезапустить цикл."><i class="glyphicon glyphicon-info-sign"></i></span>
