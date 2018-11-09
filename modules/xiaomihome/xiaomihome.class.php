@@ -484,40 +484,61 @@ class xiaomihome extends module
                   }
                }
 
+               // coordination
+               if (isset($message_data['data']['coordination'])) {
+                  $command = 'coordination';
+                  $value = $message_data['data']['coordination'];
+                  $got_commands[] = array('command' => $command, 'value' => $value);
+               }
+
+               // bed_activity
+               if (isset($message_data['data']['bed_activity'])) {
+                  $command = 'bed_activity';
+                  $value = $message_data['data']['bed_activity'];
+                  $got_commands[] = array('command' => $command, 'value' => $value);
+               }
+
+               // final_tilt_angle
+               if (isset($message_data['data']['final_tilt_angle'])) {
+                  $command = 'final_tilt_angle';
+                  $value = $message_data['data']['final_tilt_angle'];
+                  $got_commands[] = array('command' => $command, 'value' => $value);
+               }
+
                // temperature
                if (isset($message_data['data']['temperature'])) {
                   $this->getConfig();
-                  $roundMode = (int)$this->config['API_ROUND'];
-                  if ($roundMode != 0 && $roundMode != 1 && $roundMode != 2) $roundMode = 2;
+                  $roundMode = $this->config['API_ROUND'];
+                  if ($roundMode != '0' && $roundMode != '1' && $roundMode != '2') $roundMode = 2;
 
                   $command = 'temperature';
-                  $value = round(((int)$message_data['data']['temperature']) / 100, $roundMode);
+                  $value = round(((int)$message_data['data']['temperature']) / 100, (int)$roundMode);
                   $got_commands[] = array('command' => $command, 'value' => $value);
                }
 
                // humidity
                if (isset($message_data['data']['humidity'])) {
                   $this->getConfig();
-                  $roundMode = (int)$this->config['API_ROUND'];
-                  if ($roundMode != 0 && $roundMode != 1 && $roundMode != 2) $roundMode = 2;
+                  $roundMode = $this->config['API_ROUND'];
+                  if ($roundMode != '0' && $roundMode != '1' && $roundMode != '2') $roundMode = 2;
 
                   $command = 'humidity';
-                  $value = round(((int)$message_data['data']['humidity']) / 100, $roundMode);
+                  $value = round(((int)$message_data['data']['humidity']) / 100, (int)$roundMode);
                   $got_commands[] = array('command' => $command, 'value' => $value);
                }
 
                // pressure
                if (isset($message_data['data']['pressure'])) {
                   $this->getConfig();
-                  $roundMode = (int)$this->config['API_ROUND'];
-                  if ($roundMode != 0 && $roundMode != 1 && $roundMode != 2) $roundMode = 2;
+                  $roundMode = $this->config['API_ROUND'];
+                  if ($roundMode != '0' && $roundMode != '1' && $roundMode != '2') $roundMode = 2;
 
                   $command = 'pressure_kpa';
-                  $value = round(((float)$message_data['data']['pressure']) / 1000, $roundMode);
+                  $value = round(((float)$message_data['data']['pressure']) / 1000, (int)$roundMode);
                   $got_commands[] = array('command' => $command, 'value' => $value);
 
                   $command = 'pressure_mm';
-                  $value = round($value * 7.50062, $roundMode);
+                  $value = round($value * 7.50062, (int)$roundMode);
                   $got_commands[] = array('command' => $command, 'value' => $value);
                }
 
@@ -615,11 +636,11 @@ class xiaomihome extends module
                else $battery_level = 0;
 
                $this->getConfig();
-               $roundMode = (int)$this->config['API_ROUND'];
-               if ($roundMode != 0 && $roundMode != 1 && $roundMode != 2) $roundMode = 2;
+               $roundMode = $this->config['API_ROUND'];
+               if ($roundMode != '0' && $roundMode != '1' && $roundMode != '2') $roundMode = 2;
 
                $command = 'battery_level';
-               $value = round($battery_level, $roundMode);
+               $value = round($battery_level, (int)$roundMode);
                $got_commands[] = array('command' => $command, 'value' => $value);
             }
 
@@ -689,10 +710,13 @@ class xiaomihome extends module
                   $command == 'alarm' ||
                   $command == 'iam' ||
                   $command == 'leak' ||
+                  $command == 'tilt' ||
+                  $command == 'vibrate' ||
                   0)
                ) {
                   // В привязанный метод передаем через параметры "сырые" данные метрики,
-                  // а также общепринятые в МДМ OLD_VALUE и NEW_VALUE.
+                  // а также общепринятые в МДМ PROPERTY, OLD_VALUE и NEW_VALUE.
+                  $message_data['data']['PROPERTY'] = $command;
                   $message_data['data']['OLD_VALUE'] = $old_value;
                   $message_data['data']['NEW_VALUE'] = $cmd_rec['VALUE'];
                   callMethod($cmd_rec['LINKED_OBJECT'] . '.' . $cmd_rec['LINKED_METHOD'], $message_data['data']);
@@ -733,7 +757,7 @@ class xiaomihome extends module
          $this->config['API_BIND'] = trim($api_bind);
 
          global $api_round;
-         $this->config['API_ROUND'] = (int)($api_round);
+         $this->config['API_ROUND'] = $api_round;
 
          global $api_log_debmes;
          $this->config['API_LOG_DEBMES'] = $api_log_debmes;

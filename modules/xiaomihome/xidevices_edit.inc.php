@@ -29,6 +29,7 @@
              $rec['TYPE']=='sensor_ht' ||
              $rec['TYPE']=='weather' ||
              $rec['TYPE']=='weather.v1' ||
+             $rec['TYPE']=='vibration' ||
              $rec['TYPE']=='sensor_wleak.aq1')
          {
             $out['BATTERY_TYPE'] = 'CR2032';
@@ -159,6 +160,8 @@
             global ${'value'.$properties[$i]['ID']};
             $properties[$i]['VALUE']=trim(${'value'.$properties[$i]['ID']});
             */
+            $old_linked_object=$properties[$i]['LINKED_OBJECT'];
+            $old_linked_property=$properties[$i]['LINKED_PROPERTY'];
             global ${'linked_object'.$properties[$i]['ID']};
             $properties[$i]['LINKED_OBJECT']=trim(${'linked_object'.$properties[$i]['ID']});
             global ${'linked_property'.$properties[$i]['ID']};
@@ -166,8 +169,6 @@
             global ${'linked_method'.$properties[$i]['ID']};
             $properties[$i]['LINKED_METHOD']=trim(${'linked_method'.$properties[$i]['ID']});
             SQLUpdate('xicommands', $properties[$i]);
-            $old_linked_object=$properties[$i]['LINKED_OBJECT'];
-            $old_linked_property=$properties[$i]['LINKED_PROPERTY'];
             if ($old_linked_object && $old_linked_object!=$properties[$i]['LINKED_OBJECT'] && $old_linked_property && $old_linked_property!=$properties[$i]['LINKED_PROPERTY']) {
              removeLinkedProperty($old_linked_object, $old_linked_property, $this->name);
             }
