@@ -39,21 +39,21 @@
       <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
          SID:
       </label>
-      <div class="col-lg-8">[#SID#]</div>
+      <div class="col-lg-8" style="padding: 5px 10px 0px 15px;">[#SID#]</div>
    </div>
 
    <div class="form-group">
       <label class="col-lg-3 control-label"[#if ERR_SID#] style="color:red;font-weight:bold"[#endif#]>
          Gate IP:
       </label>
-      <div class="col-lg-8">[#GATE_IP#]</div>
+      <div class="col-lg-8" style="padding: 5px 10px 0px 15px;">[#GATE_IP#]</div>
    </div>
 
    <div class="form-group">
       <label class="col-lg-3 control-label"[#if ERR_UPDATED#] style="color:red;font-weight:bold"[#endif#]>
          <#LANG_UPDATED#>:
       </label>
-      <div class="col-lg-8">
+      <div class="col-lg-8" style="padding: 5px 10px 0px 15px;">
          [#UPDATED#]
       </div>
    </div>
@@ -61,7 +61,7 @@
    [#if POWER!=""#]
       <div class="form-group">
          <label class="col-lg-3 control-label">Battery:</label>
-         <div class="col-lg-8">
+         <div class="col-lg-8" style="padding: 5px 10px 0px 15px;">
             <span class="label label-[#POWER_WARNING#]"><i class="glyphicon glyphicon-flash"></i> [#POWER#]%</span>
             [#if BATTERY_TYPE!=""#]
                <span class="label label-info">[#BATTERY_TYPE#]</span>
