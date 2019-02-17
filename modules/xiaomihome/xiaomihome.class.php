@@ -310,7 +310,8 @@ class xiaomihome extends module
                   } else {
                      // Если беспроводная кнопка
                      $value = 1;
-                     if ($message_data['model'] == '86sw2' || 
+                     if ($message_data['model'] == '86sw2' ||
+                         $message_data['model'] == 'remote.b286acn01' ||
                          $message_data['model'] == 'sensor_86sw2' ||
                          $message_data['model'] == 'sensor_86sw2.aq1')
                      {

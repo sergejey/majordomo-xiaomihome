@@ -24,12 +24,16 @@
              $rec['TYPE']=='sensor_switch.aq3' ||
              $rec['TYPE']=='86sw1' ||
              $rec['TYPE']=='86sw2' ||
+             $rec['TYPE']=='remote.b186acn01' ||
+             $rec['TYPE']=='remote.b286acn01' ||
+             $rec['TYPE']=='remote.b1acn01' ||  
              $rec['TYPE']=='sensor_86sw1' ||
              $rec['TYPE']=='sensor_86sw2' ||
              $rec['TYPE']=='sensor_ht' ||
              $rec['TYPE']=='weather' ||
              $rec['TYPE']=='weather.v1' ||
              $rec['TYPE']=='vibration' ||
+             $rec['TYPE']=='vibration.aq1' ||
              $rec['TYPE']=='sensor_wleak.aq1')
          {
             $out['BATTERY_TYPE'] = 'CR2032';
@@ -175,7 +179,7 @@
          }
 
          if ($properties[$i]['LINKED_OBJECT'] && $properties[$i]['LINKED_PROPERTY']) {
-             addLinkedProperty($properties[$i]['LINKED_OBJECT'], $properties[$i]['LINKED_PROPERTY'], $this->name);
+            addLinkedProperty($properties[$i]['LINKED_OBJECT'], $properties[$i]['LINKED_PROPERTY'], $this->name);
          }
 
          if (file_exists(DIR_MODULES.'devices/devices.class.php')) {
@@ -243,11 +247,11 @@
       $out['PROPERTIES'] = $properties;
    }
 
-  if (is_array($rec)) {
+   if (is_array($rec)) {
       foreach($rec as $k => $v) {
          if (!is_array($v)) {
             $rec[$k] = htmlspecialchars($v);
-      }
+         }
       }
    }
 
