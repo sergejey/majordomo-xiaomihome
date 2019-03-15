@@ -27,7 +27,9 @@
                      <th><#LANG_TITLE#></th>
                      <th><#LANG_TYPE#></th>
                      <th>SID</th>
+                     <!--#
                      <th>IP</th>
+                     #-->
                      <th><#LANG_UPDATED#></th>
                      <th>&nbsp;</th>
                   </tr>
@@ -52,7 +54,9 @@
                            &nbsp;
                         [#endif#]
                      </td>
+                     <!--#
                      <td style="vertical-align:middle">[#GATE_IP#]</td>
+                     #-->
                      <td style="vertical-align:middle">
                      [#if UPDATED!=""#]
                         [#UPDATED#]
@@ -63,7 +67,8 @@
                      <td style="vertical-align:middle" width="1%" nowrap>
                         <div style="width:120px">
                            [#if "<#ACTION#>"=="admin"#]
-                              <a href="?data_source=<#DATA_SOURCE#>&view_mode=edit_xidevices&id=[#ID#]" class="btn btn-default" title="Редактировать"><i class="glyphicon glyphicon-pencil"></i></a>
+                              <a href="?data_source=<#DATA_SOURCE#>&view_mode=edit_xidevices&id=[#ID#]" class="btn btn-default" title="<#LANG_EDIT#>"><i class="glyphicon glyphicon-pencil"></i></a>
+                           <a href="?data_source=<#DATA_SOURCE#>&view_mode=edit_xidevices&id=[#ID#]&tab=data" class="btn btn-default" title="<#LANG_DATA#>"><i class="glyphicon glyphicon-th-list"></i></a>
                               <a href="?data_source=<#DATA_SOURCE#>&view_mode=delete_xidevices&id=[#ID#]" onClick="return confirm('<#LANG_ARE_YOU_SURE#>')" class="btn btn-default" title="Удалить"><i class="glyphicon glyphicon-remove"></i></a>
                            [#endif ACTION#]
                         </div>

@@ -18,7 +18,7 @@ if ($save_qry) {
 
 if (!$qry) $qry = '1';
 
-$sortby_xidevices = 'ID DESC';
+$sortby_xidevices = 'xidevices.TITLE';
 
 $out['SORTBY'] = $sortby_xidevices;
 
@@ -38,13 +38,19 @@ if ($res[0]['ID']) {
          for ($ic = 0; $ic < $totalc; $ic++) {
             $res[$i]['COMMANDS'] .= '<nobr>' . $commands[$ic]['TITLE'] . ': <i>' . $commands[$ic]['VALUE'] . '</i>';
             if ($commands[$ic]['LINKED_OBJECT'] != '') {
-               $res[$i]['COMMANDS'] .= ' (' . $commands[$ic]['LINKED_OBJECT'];
-               if ($commands[$ic]['LINKED_PROPERTY'] != '') {
-                  $res[$i]['COMMANDS'] .= '.' . $commands[$ic]['LINKED_PROPERTY'];
-               } elseif ($commands[$ic]['LINKED_METHOD'] != '') { 
-                  $res[$i]['COMMANDS'] .= '.' . $commands[$ic]['LINKED_METHOD'];
+               $device=SQLSelectOne("SELECT TITLE FROM devices WHERE LINKED_OBJECT='".DBSafe($commands[$ic]['LINKED_OBJECT'])."'");
+               if ($device['TITLE']) {
+                  $res[$i]['COMMANDS'] .= ' (' . $device['TITLE'].')';
+               } else {
+                  $res[$i]['COMMANDS'] .= ' (' . $commands[$ic]['LINKED_OBJECT'];
+                  if ($commands[$ic]['LINKED_PROPERTY'] != '') {
+                     $res[$i]['COMMANDS'] .= '.' . $commands[$ic]['LINKED_PROPERTY'];
+                  } elseif ($commands[$ic]['LINKED_METHOD'] != '') {
+                     $res[$i]['COMMANDS'] .= '.' . $commands[$ic]['LINKED_METHOD'];
+                  }
+                  $res[$i]['COMMANDS'] .= ')';
+
                }
-               $res[$i]['COMMANDS'] .= ')';
             }
             if ($commands[$ic]['TITLE'] == 'battery_level') {
                $res[$i]['POWER'] = $commands[$ic]['VALUE'];
