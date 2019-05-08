@@ -61,6 +61,10 @@ if ($res[0]['ID']) {
                   $res[$i]['POWER_WARNING'] = 'danger';
             }
             $res[$i]['COMMANDS'] .= ";</nobr> ";
+
+ if (time()-strtotime($res[$i]['UPDATED'])>3000) {
+  $res[$i]['LOST']='1';}
+
          }
       }
    }
