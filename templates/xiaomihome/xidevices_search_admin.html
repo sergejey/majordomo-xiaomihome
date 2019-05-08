@@ -39,15 +39,17 @@
                      <td style="vertical-align:middle">
                         <img src="../templates/xiaomihome/img/[#TYPE#].png" height="40px" onerror="this.src='../templates/xiaomihome/img/unknown.png'">
                      </td>
-                     <td style="vertical-align:middle">
+                     <td style="vertical-align:middle [#if LOST#] ;color:lightgray;font-weight:bold;[#endif#]">
+                     
                         <b>[#TITLE#]</b>
                         [#if POWER!=""#]
                            <span class="label label-[#POWER_WARNING#]"><i class="glyphicon glyphicon-flash"></i> [#POWER#]%</span>
                         [#endif#]
                         [#if COMMANDS!=""#]<div>[#COMMANDS#]</div>[#endif#]
                      </td>
-                     <td style="vertical-align:middle">[#TYPE#]</td>
-                     <td style="vertical-align:middle">
+
+                     <td style="vertical-align:middle [#if LOST#] ;color:lightgray;font-weight:bold;[#endif#]">[#TYPE#]</td>
+                     <td style="vertical-align:middle [#if LOST#] ;color:lightgray;font-weight:bold;[#endif#]">
                         [#if SID!=""#]
                            [#SID#]
                         [#else#]
@@ -57,7 +59,8 @@
                      <!--#
                      <td style="vertical-align:middle">[#GATE_IP#]</td>
                      #-->
-                     <td style="vertical-align:middle">
+
+                     <td style="vertical-align:middle [#if LOST#] ;color:lightgray;font-weight:bold;[#endif#]">
                      [#if UPDATED!=""#]
                         [#UPDATED#]
                      [#else#]
