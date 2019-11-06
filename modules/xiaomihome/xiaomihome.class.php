@@ -119,6 +119,9 @@ class xiaomihome extends module
          $this->admin($out);
       } else {
          $this->usual($out);
+         if ($this->ajax) {
+            return;
+         }
       }
 
       if (isset($this->owner->action)) {
@@ -176,7 +179,7 @@ class xiaomihome extends module
 
       if ($message_data['sid']) {
 
-         $device = SQLSelectOne("SELECT * FROM xidevices WHERE SID='" . DBSafe($message_data['sid']) . "'");
+         $device = SQLSelectOne("SELECT * FROM xidevices WHERE CONV(SID,16,10)=" . HexDec($message_data['sid']));
 
          if (!$device['ID']) {
             $device = array();
@@ -826,11 +829,14 @@ class xiaomihome extends module
             global $ip;
             global $log_debmes;
             global $log_gw_heartbeat;
-
+            if (preg_match('/open/',$_SERVER['REQUEST_URI'])) {
+               DebMes($_SERVER['REQUEST_URI'],'xiaomi_request');
+            }
             $this->processMessage($message, $ip, $log_debmes, $log_gw_heartbeat);
          }
+      } else {
+         $this->admin($out);
       }
-      $this->admin($out);
    }
 
    /**
