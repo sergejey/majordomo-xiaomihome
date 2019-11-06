@@ -179,7 +179,10 @@ class xiaomihome extends module
 
       if ($message_data['sid']) {
 
-         $device = SQLSelectOne("SELECT * FROM xidevices WHERE CONV(SID,16,10)=" . HexDec($message_data['sid']));
+         $device = SQLSelectOne("SELECT * FROM xidevices WHERE SID='" . DBSafe($message_data['sid'])."'");
+         if (!$device['ID']) {
+            $device = SQLSelectOne("SELECT * FROM xidevices WHERE SID='0" . DBSafe($message_data['sid'])."'");
+         }
 
          if (!$device['ID']) {
             $device = array();
