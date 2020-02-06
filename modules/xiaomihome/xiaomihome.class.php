@@ -684,6 +684,7 @@ class xiaomihome extends module
                   setGlobal($cmd_rec['LINKED_OBJECT'] . '.' . $cmd_rec['LINKED_PROPERTY'], $value, array($this->name => '0'));
                }
 
+               /*
                // Привязанный метод вызываем, когда новое значение метрики не равно старому,
                // и для всех метрик, в которые пишется 1, как обновление статуса,
                // а также для критичных метрик alarm и leak.
@@ -721,6 +722,10 @@ class xiaomihome extends module
                   $command == 'vibrate' ||
                   0)
                ) {
+               */
+
+               // Привязанный метод вызываем всегда
+               if ($cmd_rec['LINKED_OBJECT'] && $cmd_rec['LINKED_METHOD']) {
                   // В привязанный метод передаем через параметры "сырые" данные метрики,
                   // а также общепринятые в МДМ PROPERTY, OLD_VALUE и NEW_VALUE.
                   $message_data['data']['PROPERTY'] = $command;
