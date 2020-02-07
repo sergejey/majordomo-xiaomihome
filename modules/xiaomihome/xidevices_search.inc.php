@@ -49,7 +49,6 @@ if ($res[0]['ID']) {
                      $res[$i]['COMMANDS'] .= '.' . $commands[$ic]['LINKED_METHOD'];
                   }
                   $res[$i]['COMMANDS'] .= ')';
-
                }
             }
             if ($commands[$ic]['TITLE'] == 'battery_level') {
@@ -62,9 +61,9 @@ if ($res[0]['ID']) {
             }
             $res[$i]['COMMANDS'] .= ";</nobr> ";
 
- if (time()-strtotime($res[$i]['UPDATED'])>3000) {
-  $res[$i]['LOST']='1';}
-
+            if (time()-strtotime($res[$i]['UPDATED'])>3600) {
+                  $res[$i]['LOST']='1';
+            }
          }
       }
    }
