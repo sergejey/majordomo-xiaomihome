@@ -837,9 +837,9 @@ class xiaomihome extends module
             global $ip;
             global $log_debmes;
             global $log_gw_heartbeat;
-            if (preg_match('/open/',$_SERVER['REQUEST_URI'])) {
+            /*if (preg_match('/open/',$_SERVER['REQUEST_URI'])) {
                DebMes($_SERVER['REQUEST_URI'],'xiaomi_request');
-            }
+            }*/
             $this->processMessage($message, $ip, $log_debmes, $log_gw_heartbeat);
          }
       } else {
