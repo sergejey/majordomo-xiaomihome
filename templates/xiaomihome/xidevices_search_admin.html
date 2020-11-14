@@ -19,12 +19,20 @@
             [#endif PAGES#]
             <!-- / paging -->
             <!-- search results (list) -->
-            <form action="?" method="post" name="frmList_xidevices" style="padding:0px" class="form">
                <table  align=center class="table table-striped">
+                  <form action="?" method="post" id="frmList_xidevices" name="frmList_xidevices" class="form">
+                  <thead>
                   <tr>
                      <th></th>
                      <th><a href="?sortby=title"><#LANG_TITLE#></a></th>
-                     <th><a href="?sortby=type"><#LANG_TYPE#></a></th>
+                     <th>
+                        <select name="type" class="form-control" onchange="$('#frmList_xidevices').submit();">
+                           <option value="all"><#LANG_ALL#></option>
+                           [#begin TYPES#]
+                           <option value="[#TYPE#]"[#if TYPE="<#TYPE#>"#] selected[#endif#]>[#TYPE#] ([#TOTAL#])</option>
+                           [#end TYPES#]
+                        </select>
+                     </th>
                      <th>SID</th>
                      <!--#
                      <th>IP</th>
@@ -32,6 +40,8 @@
                      <th><a href="?sortby=updated"><#LANG_UPDATED#></a></th>
                      <th>&nbsp;</th>
                   </tr>
+                  </thead>
+                  </form>
                   <tbody>
                   [#begin RESULT#]
                   <tr style="height:52px" class="hover_btn2">
@@ -72,9 +82,6 @@
                   [#end RESULT#]
                   </tbody>
                </table>
-               <input type="hidden" name="data_source" value="<#DATA_SOURCE#>">
-               <input type="hidden" name="view_mode" value="multiple_xidevices">
-            </form>
             <!-- / search results (list) -->
             <!-- paging -->
             [#if PAGES#]

@@ -463,6 +463,7 @@ class xiaomihome extends module
                // motion_status
                if (isset($message_data['data']['motion_status'])) {
                   if ($message_data['data']['motion_status'] == 'motion') {
+                     $message_data['data']['no_motion']=0;
                      $value = 1;
                      $command = 'motion';
                      $got_commands[] = array('command' => $command, 'value' => $value);
@@ -472,8 +473,11 @@ class xiaomihome extends module
                // no_motion
                if (isset($message_data['data']['no_motion'])) {
                   $command = 'no_motion';
-                  $value = $message_data['data']['no_motion'];
+                  $value = (int)$message_data['data']['no_motion'];
                   $got_commands[] = array('command' => $command, 'value' => $value);
+                  if ($value>=60 && $value<120) { //
+                     $got_commands[] = array('command' => 'motion', 'value' => 0);
+                  }
                }
 
                // rotate
@@ -572,6 +576,10 @@ class xiaomihome extends module
                   } else if ($status == 'off') {
                      $command = 'channel';
                      $value = 0;
+                  } else if ($status == 'motion') {
+                     $command = $status;
+                     $value = 1;
+                     $got_commands[] = array('command' => 'no_motion', 'value' => 0);
                   } else {
                      // все остальные - click, iam, motion, cube и т. д.
                      $command = $status;

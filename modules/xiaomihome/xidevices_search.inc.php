@@ -19,6 +19,13 @@ if ($save_qry) {
 if (!$qry) $qry = '1';
 
 $sortby=gr('sortby');
+if (!$sortby && $session->data['xiamihome_sort']) {
+   $sortby = $session->data['xiamihome_sort'];
+} else {
+   $session->data['xiamihome_sort']=$sortby;
+   $session->save();
+}
+
 if ($sortby=='updated') {
    $sortby_xidevices = 'xidevices.UPDATED DESC';
 } elseif ($sortby=='type') {
@@ -32,6 +39,19 @@ $out['SORTBY'] = $sortby_xidevices;
 $data_updated=gr('data_updated','int');
 if ($data_updated>0) {
    $qry.=" AND xidevices.UPDATED>'".date('Y-m-d H:i:s',$data_updated)."'";
+}
+
+if (!gr('ajax')) {
+   if (gr('type')) {
+      $type = gr('type');
+      if ($type == 'all') {
+         $type = '';
+      }
+   }
+   if ($type) {
+      $qry.=" AND xidevices.TYPE='".DBSafe($type)."'";
+      $out['TYPE']=$type;
+   }
 }
 
 $res = SQLSelect("SELECT * FROM xidevices WHERE $qry ORDER BY $sortby_xidevices");
@@ -79,7 +99,7 @@ if ($res[0]['ID']) {
          }
       }
    }
-
+   $out['TYPES']=SQLSelect("SELECT `TYPE`, COUNT(*) as TOTAL FROM xidevices GROUP BY `TYPE` ORDER BY `TYPE` ");
    $out['RESULT'] = $res;
 }
 
