@@ -643,11 +643,10 @@ class xiaomihome extends module
                   $mvolts = $message_data['data']['battery_voltage'];
                }
                $got_commands[] = array('command' => $command, 'value' => $value);
-               if ($mvolts  >=    3000) $battery_level = 100;
-               else if ($mvolts > 2900) $battery_level = 100 - ((3000 - $mvolts) * 58) / 100;
-               else if ($mvolts > 2740) $battery_level = 42 - ((2900 - $mvolts) * 24) / 160;
-               else if ($mvolts > 2440) $battery_level = 18 - ((2740 - $mvolts) * 12) / 300;
-               else if ($mvolts > 2100) $battery_level = 6 - ((2440 - $mvolts) * 6) / 340;
+               if ($mvolts  >=    3250) $battery_level = 100;
+               else if ($mvolts > 3200) $battery_level = 100 - ((3250 - $mvolts) * 5) / 50;
+               else if ($mvolts > 3000) $battery_level = 95 - ((3200 - $mvolts) * 55) / 200;
+               else if ($mvolts > 2750) $battery_level = 40 - ((3000 - $mvolts) * 40) / 250;
                else $battery_level = 0;
 
                $this->getConfig();
