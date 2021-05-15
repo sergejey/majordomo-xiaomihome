@@ -8,6 +8,15 @@ if ($this->owner->name == 'panel') {
 
 $qry = '1';
 
+$go_linked_object=gr('go_linked_object');
+$go_linked_property=gr('go_linked_property');
+if ($go_linked_object && $go_linked_property) {
+   $tmp = SQLSelectOne("SELECT ID, DEVICE_ID FROM xicommands WHERE LINKED_OBJECT = '".DBSafe($go_linked_object)."' AND LINKED_PROPERTY='".DBSafe($go_linked_property)."'");
+   if ($tmp['ID']) {
+      $this->redirect("?id=".$tmp['ID']."&view_mode=edit_xidevices&id=".$tmp['DEVICE_ID']."&tab=data");
+   }
+}
+
 global $save_qry;
 
 if ($save_qry) {
