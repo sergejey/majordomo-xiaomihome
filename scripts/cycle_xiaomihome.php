@@ -96,11 +96,14 @@ $latest_data_received = time();
 $rcv_count = 0;
 $tcv_count = 0;
 
+$cycleVarName='ThisComputer.'.str_replace('.php', '', basename(__FILE__)).'Run';
+
 while (1) {
 
    if ((time() - $latest_check) >= $check_period) {
       $latest_check = time();
-      setGlobal((str_replace('.php', '', basename(__FILE__))) . 'Run', time(), 1);
+      //setGlobal((str_replace('.php', '', basename(__FILE__))) . 'Run', time(), 1);
+      saveToCache("MJD:$cycleVarName", $latest_check);
    }
 
    $queue = SQLSelect("SELECT * FROM xiqueue ORDER BY ID");
